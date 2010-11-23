@@ -34,9 +34,11 @@ public class OficinaJDBCDao implements OficinaDao {
         PreparedStatement pStmt = this.connection.prepareStatement(sql);
 
         ResultSet result = pStmt.executeQuery();
-        result.next();
 
         Vector<Oficina> vetOficinas = new Vector<Oficina>();
+
+        if(result == null || !result.next())
+            throw new MinhaException("Não existem Oficinas cadastrados no Sistema !");
 
         do{
             Oficina oficina = new Oficina();
@@ -46,7 +48,7 @@ public class OficinaJDBCDao implements OficinaDao {
             cidade.setCodCidade(result.getInt("cod_cidade"));
 
             endereco.setNomeRua(result.getString("rua"));
-            endereco.setNumero(result.getInt("numero"));
+            endereco.setNumero(result.getInt("numero_oficina"));
             endereco.setNomeBairro(result.getString("bairro"));
             endereco.setCidade(cidade);
 
@@ -196,9 +198,12 @@ public class OficinaJDBCDao implements OficinaDao {
         Vector ofic = new Vector();
         try
         {
-            sql = "SELECT * " +
-                    "FROM oficina "+
-                    "order by " + texto + ";";
+            sql = "SELECT of.*, " +
+                        "ci.nome_cidade "+
+                    "FROM oficina of, "+
+                        "cidade ci "+
+                    "where of.cod_cidade = ci.cod_cidade" +
+                    "   order by " + texto + ";";
 
             this.connection.setAutoCommit(false);
             PreparedStatement prepSt = this.connection.prepareStatement(sql);
@@ -212,7 +217,7 @@ public class OficinaJDBCDao implements OficinaDao {
                 Cidade cid = new Cidade();
                 Endereco end = new Endereco();
 
-                cid.setCodCidade(result.getInt("cod_cidade"));
+                cid.setNomeCidade(result.getString("nome_cidade"));
 
                 end.setNomeRua(result.getString("rua"));
                 end.setNumero(result.getInt("numero_oficina"));
@@ -225,7 +230,7 @@ public class OficinaJDBCDao implements OficinaDao {
                 oficina.setCnpj(result.getString("cnpj"));
                 oficina.setTelefone(result.getString("telefone"));
                 oficina.setEndereco(end);
-                
+
 
                 ofic.addElement(oficina);
             }while(result.next());

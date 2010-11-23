@@ -6,8 +6,10 @@ import domain.*;
 import java.text.ParseException;
 import util.ConexaoException;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import util.MinhaException;
 
 public class ControladoraEntrega {
@@ -21,6 +23,13 @@ public class ControladoraEntrega {
         return marc;
     }
 
+    public int obterUltimaEntrega() throws SQLException, ConexaoException, ClassNotFoundException, MinhaException {
+        
+        this.vetEntregas = entregaDao.obterEntrega();
+        
+        return this.vetEntregas.get(0).getCodEntrega();
+    }
+
     public void setMarc(int marc) {
         this.marc = marc;
     }
@@ -32,13 +41,20 @@ public class ControladoraEntrega {
 
    public void inserirNovaEntrega(Vector linha) throws MinhaException, SQLException, ParseException, ConexaoException {
         Entrega entrega = new Entrega();
+        
         this.atualizarEntrega(entrega, linha);
+        
         entregaDao.inserirEntrega(entrega);
+        
         carroDao.alterarKMDisponibilidade(linha);
 
     }
    
     private void atualizarEntrega(Entrega entrega, Vector linha) throws ParseException {
+        SimpleDateFormat formatador = new SimpleDateFormat("HH:mm");
+        Date horaE = formatador.parse(linha.get(3).toString());
+        Time horaEntre = new Time(horaE.getTime());
+        
         java.text.SimpleDateFormat formato = new java.text.SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date data = null;
@@ -49,9 +65,9 @@ public class ControladoraEntrega {
         entrega.setCodLocacao(loca);
         entrega.setQuilometragemFinal(Integer.parseInt(linha.get(1).toString()));
         entrega.setDataEntrega(data);
-        entrega.setHoraEntrega(linha.get(3).toString());
+        entrega.setHoraEntrega(horaEntre);
         entrega.setValorTotal(Integer.parseInt(linha.get(4).toString()));
-        entrega.setQuantidadeVezes(Integer.parseInt(linha.get(5).toString()));
+        
        
     }
 
@@ -102,12 +118,11 @@ public class ControladoraEntrega {
     {
         Vector linha = new Vector();
         linha.addElement(entre.getCodEntrega());
-        linha.addElement(entre.getCodLocacao());
+        linha.addElement(entre.getCodLocacao().getCodLocacao());
         linha.addElement(entre.getQuilometragemFinal());
         linha.addElement(entre.getDataEntrega());
         linha.addElement(entre.getHoraEntrega());
         linha.addElement(entre.getValorTotal());
-        linha.addElement(entre.getQuantidadeVezes());
         
         return linha;
     }
@@ -166,23 +181,28 @@ public class ControladoraEntrega {
 
         Locacao loca  = locacaoDao.selecionarCarroPorCpf(cpf);
 
-        int codGrupoCar = loca.getGrupoCarro().getCodGrupoCarro();
-        GrupoCarro grupoCar = grupoCarroDao.selecionarGrupoCarroPorCod(codGrupoCar);
-        Carro car = carDao.selecionarCarro(codGrupoCar);
+        int codCar = loca.getCarro().getCodCarro();
+        GrupoCarro grupoCar = grupoCarroDao.selecionarGrupoCarroPorCod(codCar);
+        Carro car = carDao.selecionarCarro(codCar);
         
         Vector carroCliente = new Vector();
 
-        carroCliente.addElement(car.getPlaca());                    //0
-        carroCliente.addElement(grupoCar.getNomeGrupo());           //1
-        carroCliente.addElement(car.getMarca());                    //2
-        carroCliente.addElement(loca.getQuilometragemInicial());    //3
-        carroCliente.addElement(loca.getCobertura());               //4
-        carroCliente.addElement(loca.getValorPrevisto());           //5
-        carroCliente.addElement(loca.getDateLocacao());             //6
-        carroCliente.addElement(loca.getDataEntrega());             //7
-        carroCliente.addElement(grupoCar.getPrecoDiaria());         //8
-        carroCliente.addElement(loca.getCodLocacao());              //9
-        carroCliente.addElement(car.getCodCarro());
+        carroCliente.addElement(car.getPlaca());                                        //0
+        carroCliente.addElement(grupoCar.getNomeGrupo());                               //1
+        carroCliente.addElement(car.getMarca());                                        //2
+        carroCliente.addElement(loca.getQuilometragemInicial());                        //3
+        carroCliente.addElement(loca.getCobertura());                                   //4
+        carroCliente.addElement(loca.getValorPrevisto());                               //5
+        carroCliente.addElement(loca.getDateLocacao());                                 //6
+        carroCliente.addElement(loca.getDataEntrega());                                 //7
+        carroCliente.addElement(grupoCar.getPrecoDiaria());                             //8
+        carroCliente.addElement(grupoCar.getPrecoQuilometroAdicional());                //9
+        carroCliente.addElement(codCar);                                                //10
+        carroCliente.addElement(loca.getCodLocacao());                                  //11
+        carroCliente.addElement(loca.getPlano());                                       //12
+        carroCliente.addElement(grupoCar.getPrecoDiariaQuilometrada());                 //13
+        carroCliente.addElement(grupoCar.getPrecoCobertura());                          //14
+        carroCliente.addElement(car.getModelo());                                       //15
         
         return carroCliente;
     }

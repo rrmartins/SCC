@@ -32,6 +32,15 @@ public class ControladoraOficina {
         this.marc = marc;
     }
 
+    public Vector<Oficina> getVetOficina() {
+        return vetOficina;
+    }
+
+    public void setVetOficina(Vector<Oficina> vetOficina) {
+        this.vetOficina = vetOficina;
+    }
+    
+
     public ControladoraOficina() {
         this.oficinaDao = FabricaDao.getOficinaDao("JDBC");
         this.ufDao = FabricaDao.getUFDao("JDBC");
@@ -123,6 +132,24 @@ public class ControladoraOficina {
         return vetOficina;
     }
 
+    public Vector obterUFPorCidade(String nome) throws MinhaException, SQLException, ConexaoException {
+        Vector<UF> ufCidade = obterUF(nome);
+        Vector linhas = new Vector();
+
+        // Montando as linhas
+        for (int i = 0; i < ufCidade.size(); i++) {
+            UF uf = ufCidade.get(i);
+            linhas.addElement(uf.getNomeUF());
+        }
+
+        return linhas;
+    }
+
+    private Vector<UF> obterUF(String nome) throws MinhaException, SQLException, ConexaoException {
+        Uf = ufDao.obterUF(nome);
+        return Uf;
+    }
+
     @SuppressWarnings("unchecked")
     public Vector obterLinhasOficina(String texto) throws SQLException, ClassNotFoundException, MinhaException, ConexaoException
     {
@@ -143,7 +170,7 @@ public class ControladoraOficina {
     {
         Vector linha = new Vector();
         linha.addElement(ofi.getCodOficina());
-        linha.addElement(ofi.getCodCidade().getCodCidade());
+        linha.addElement(ofi.getCodCidade().getNomeCidade());
         linha.addElement(ofi.getNomeOficina());
         linha.addElement(ofi.getCnpj());
         linha.addElement(ofi.getTelefone());
@@ -175,7 +202,6 @@ public class ControladoraOficina {
 
     public Vector<Oficina> selecionarTodasOficinas () throws MinhaException, SQLException, ConexaoException {
 
-        OficinaDao oficinaDao = FabricaDao.getOficinaDao("JDBC");
         this.vetOficina = oficinaDao.selecionarTodasOficinas();
 
         return this.vetOficina;

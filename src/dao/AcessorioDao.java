@@ -6,6 +6,7 @@
 package dao;
 
 import domain.Acessorio;
+import domain.GrupoCarro;
 import java.sql.SQLException;
 import java.util.Vector;
 import util.ConexaoException;
@@ -26,5 +27,7 @@ public interface AcessorioDao {
     public void alterarAcessorio (Acessorio acessorio) throws SQLException, MinhaException, ConexaoException;
 
     public Vector<Acessorio> selecionarTodosAcessorio() throws MinhaException, SQLException, ConexaoException;
+
+    public Vector<Acessorio> selecionarAcessorioGrupo(GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException;
 
 }

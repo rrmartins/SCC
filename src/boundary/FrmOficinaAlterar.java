@@ -35,7 +35,6 @@ public class FrmOficinaAlterar extends javax.swing.JDialog {
     Vector cidadeUf = new Vector();
     DefaultComboBoxModel cidades = new DefaultComboBoxModel();
     DefaultComboBoxModel estados = new DefaultComboBoxModel();
-    int codCidade;
 
     /** Creates new form FrmCadastroOficina
      * @param linha 
@@ -49,9 +48,8 @@ public class FrmOficinaAlterar extends javax.swing.JDialog {
         this.jCBES.removeAllItems();
         this.jCBCidade.removeAllItems();
         uf = cadastroOficina.obterLinhasUF();
-        codCidade = Integer.parseInt(linha.get(1).toString());
 
-        cidadeUf = cadastroOficina.obterUFCidadePorCod(codCidade);
+        cidadeUf = cadastroOficina.obterUFPorCidade(linha.get(1).toString());
 
         String ufS ="UF";
         estados.addElement(ufS);
@@ -60,9 +58,9 @@ public class FrmOficinaAlterar extends javax.swing.JDialog {
         }
         jCBES.setModel(estados);
         jCBES.setSelectedItem(cidadeUf.get(0));
-        cidades.addElement("Selecione uma UF");
+        cidades.addElement(linha.get(1).toString());
         jCBCidade.setModel(cidades);
-        jCBCidade.setSelectedItem(cidadeUf.get(1));
+        jCBCidade.setSelectedItem(cidades);
 
         jTFNomeOficina.setText(linha.get(2).toString());
         jTFCNPJ.setText(linha.get(3).toString());
@@ -281,6 +279,7 @@ public class FrmOficinaAlterar extends javax.swing.JDialog {
                 Logger.getLogger(FrmOficinaAlterar.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
 
     }//GEN-LAST:event_jCBESItemStateChanged
 
@@ -304,22 +303,22 @@ public class FrmOficinaAlterar extends javax.swing.JDialog {
                                   if (!this.jTFBairro.getText().isEmpty())
                                   {
                                         Vector novaOficina = new Vector();
-                                        novaOficina.addElement(this.jTFNomeOficina.getText());
-                                        novaOficina.addElement(this.jTFCNPJ.getText());
-                                        novaOficina.addElement(this.jTFTelefone.getText());
-                                        novaOficina.addElement(this.jCBES.getSelectedItem());
-                                        novaOficina.addElement(this.jCBCidade.getSelectedItem());
-                                        novaOficina.addElement(this.jTFRua.getText());
-                                        novaOficina.addElement(this.jTFNumero.getText());
-                                        novaOficina.addElement(this.jTFBairro.getText());
-                                        novaOficina.addElement(linha.get(0));
-                                        novaOficina.addElement(codCidade);
+                                        novaOficina.addElement(this.jTFNomeOficina.getText());      //0
+                                        novaOficina.addElement(this.jTFCNPJ.getText());             //1
+                                        novaOficina.addElement(this.jTFTelefone.getText());         //2
+                                        novaOficina.addElement(this.jCBES.getSelectedItem());       //3
+                                        novaOficina.addElement(this.jCBCidade.getSelectedItem());   //4
+                                        novaOficina.addElement(this.jTFRua.getText());              //5
+                                        novaOficina.addElement(this.jTFNumero.getText());           //6
+                                        novaOficina.addElement(this.jTFBairro.getText());           //7
+                                        novaOficina.addElement(linha.get(0));                       //8
+                                        
 
                                         try
                                         {
                                             try {
                                                 this.cadastroOficina.alterarOficina(novaOficina);
-                                            } catch (MinhaException ex) {
+                                            }catch (MinhaException ex) {
                                                 Logger.getLogger(FrmOficinaAlterar.class.getName()).log(Level.SEVERE, null, ex);
                                             } catch (ParseException ex) {
                                                 Logger.getLogger(FrmOficinaAlterar.class.getName()).log(Level.SEVERE, null, ex);

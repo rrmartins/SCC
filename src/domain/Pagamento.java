@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.Date;
+
 
 public class Pagamento {
 
@@ -7,11 +9,31 @@ public class Pagamento {
 
     private int quantidadeVezes;
 
+    private Date dataEmissao;
+
+    private Date dataVencimento;
+
     private Double valorTotal;
 
     private Entrega mEntrega;
 
     public Pagamento () {
+    }
+
+    public Date getDataEmissao() {
+        return dataEmissao;
+    }
+
+    public void setDataEmissao(Date dataEmissao) {
+        this.dataEmissao = dataEmissao;
+    }
+
+    public Date getDataVencimento() {
+        return dataVencimento;
+    }
+
+    public void setDataVencimento(Date dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 
     public int getCodPagamento () {

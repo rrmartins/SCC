@@ -23,6 +23,7 @@ public class FrmListagemGrupoCarro extends javax.swing.JDialog {
 
     public FrmListagemGrupoCarro() throws ConexaoException {
         initComponents();
+        this.setLocationRelativeTo(null);
         this.limparTabela();
         this.preencherTabela();
     }
@@ -196,7 +197,7 @@ private void b_InserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
     JDialog janela = null;
         try {
-            janela = new FrmCadastroGrupoCarro(null, true);
+            janela = new FrmCadastroGrupoCarro();
             janela.setVisible(true);
             this.limparTabela();
             this.preencherTabela();
@@ -221,7 +222,7 @@ private void b_AlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 
         JDialog janela = null;
             try {
-                janela = new FrmAtualizaGrupoCarro(null, true, this.controladoraGrupoCarro);
+                janela = new FrmAtualizaGrupoCarro( this.controladoraGrupoCarro);
                 janela.setVisible(true);
                 this.limparTabela();
                 this.preencherTabela();

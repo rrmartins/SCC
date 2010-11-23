@@ -225,9 +225,8 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
         ft_Nasc = new javax.swing.JFormattedTextField();
         ft_Cpf = new javax.swing.JFormattedTextField();
         ft_Tel = new javax.swing.JFormattedTextField();
-        jPanel2 = new javax.swing.JPanel();
-        b_Cadastrar = new javax.swing.JButton();
         b_Cancelar = new javax.swing.JButton();
+        b_Cadastrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("SCC - Funcionário");
@@ -418,28 +417,14 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
-        b_Cadastrar.setText("Confirmar");
-
         b_Cancelar.setText("Cancelar");
+        b_Cancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_CancelarActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(337, Short.MAX_VALUE)
-                .addComponent(b_Cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(b_Cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(b_Cadastrar)
-                    .addComponent(b_Cancelar)))
-        );
+        b_Cadastrar.setText("Confirmar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -447,9 +432,13 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(340, Short.MAX_VALUE)
+                .addComponent(b_Cancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(b_Cadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -457,13 +446,20 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(b_Cadastrar)
+                    .addComponent(b_Cancelar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void b_CancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_CancelarActionPerformed
+
+        this.dispose();
+    }//GEN-LAST:event_b_CancelarActionPerformed
 
 
 //
@@ -491,7 +487,6 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
     protected javax.swing.JFormattedTextField ft_Nasc;
     protected javax.swing.JFormattedTextField ft_Tel;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel l_Bairro;
     private javax.swing.JLabel l_Cargo;
     private javax.swing.JLabel l_Cidade;
@@ -577,18 +572,18 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
                                                                 }
                                                                 catch(ParseException erro)
                                                                 {
-                                                                    erro.getMessage();
+                                                                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                                                                 }
                                                                 catch(SQLException erro)
                                                                 {
-                                                                    JOptionPane.showMessageDialog(null, erro.getMessage());
+                                                                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                                                                 }
                                                                 catch(MinhaException erro)
                                                                 {
-                                                                    erro.getMessage();
+                                                                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                                                                 }
                                                                 catch (ConexaoException erro) {
-                                                                    JOptionPane.showMessageDialog(null, erro.getMessage());
+                                                                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                                                                 }
                                                                 finally{
                                                                     this.setVisible(false);
@@ -642,7 +637,7 @@ public class FrmCadastroFuncionario extends javax.swing.JDialog implements Actio
         try {
             this.cb_Cidade.setModel(new DefaultComboBoxModel(this.cidadesCombo()));
         } catch (ConexaoException ex) {
-            Logger.getLogger(FrmCadastroFuncionario.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
 
     }

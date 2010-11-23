@@ -8,20 +8,22 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import util.ConexaoException;
 import util.MinhaException;
 
+
+
+
 public class FrmRevisao extends javax.swing.JDialog {
 
-    private ControladoraFuncionario controladoraFuncionario = new ControladoraFuncionario();
-    private ControladoraOficina controladoraOficina = new ControladoraOficina();
-    private ControladoraRevisao controladoraRevisao = new ControladoraRevisao();
-    static  Double valorTotal;
+    private ControladoraFuncionario controlFunc;
+    private ControladoraOficina controlOf;
+    private ControladoraRevisao controlRevisao;
+    private Vector dadosEntrega;
+    Double valorTotal;
 
     public Double getValorTotal() {
         return valorTotal;
@@ -31,12 +33,18 @@ public class FrmRevisao extends javax.swing.JDialog {
         this.valorTotal = valorTotal;
     }
 
-    public FrmRevisao() {
+
+    public FrmRevisao(ControladoraFuncionario controladoraFuncionario, ControladoraOficina controladoraOficina, ControladoraRevisao controladoraRevisao, Vector dados) {
         initComponents();
+        this.setModal(true);
+        this.dadosEntrega = dados;
+        this.controlFunc = controladoraFuncionario;
+        this.controlOf = controladoraOficina;
+        this.controlRevisao = controladoraRevisao;
         this.jDC_dataEntrada.setDate(new Date());
         this.jDC_dataSaida.setDate(new Date());
         this.setLocationRelativeTo(null);
-        this.setModal(true);
+        this.preencherCampos();
     }
 
 
@@ -72,12 +80,28 @@ public class FrmRevisao extends javax.swing.JDialog {
 
     public Vector criarRevisao()
     {
-
         Vector revisao = new Vector();
 
+        if(this.verificaCamposVazios()){
+            
+            revisao.add(this.tfNEntrega.getText());
+            revisao.add(this.taDescricao.getText());
+            revisao.add(this.tfValorTotal.getText());
+            revisao.add(this.jDC_dataEntrada.getDate());
+            revisao.add(this.jDC_dataSaida.getDate());
+            
+            String responsavel;
+            if(this.rbMec.isSelected())
+                 responsavel = "mecanico";
+            else
+                responsavel = "oficina";
+            
+            revisao.add(responsavel);
+            return revisao;
+        }
 
-
-        return revisao;
+        else
+            return null;
 
     }
 
@@ -90,7 +114,7 @@ public class FrmRevisao extends javax.swing.JDialog {
         if(responsavel.equals("Mecanico"))
         {
             try {
-                nomes = this.controladoraFuncionario.obterFuncionariosPorCargo(responsavel);
+                nomes = this.controlFunc.obterFuncionariosPorCargo(responsavel);
             } catch (MinhaException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             } catch (SQLException ex) {
@@ -101,7 +125,7 @@ public class FrmRevisao extends javax.swing.JDialog {
         if(responsavel.equals("Oficina"))
         {
             try {
-                nomes = this.controladoraOficina.obterOficinas();
+                nomes = this.controlOf.obterOficinas();
             } catch (MinhaException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             } catch (SQLException ex) {
@@ -126,7 +150,7 @@ public class FrmRevisao extends javax.swing.JDialog {
         lNome = new javax.swing.JLabel();
         lPlaca = new javax.swing.JLabel();
         lChassi = new javax.swing.JLabel();
-        tfNome = new javax.swing.JTextField();
+        tfNomeModelo = new javax.swing.JTextField();
         tfPlaca = new javax.swing.JTextField();
         tfChassi = new javax.swing.JTextField();
         separador1 = new javax.swing.JSeparator();
@@ -157,17 +181,17 @@ public class FrmRevisao extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        lNEntrega.setText("Número da Locação");
+        lNEntrega.setText("Numero da Entrega");
 
         tfNEntrega.setEnabled(false);
 
-        lNome.setText("Cliente");
+        lNome.setText("Modelo");
 
         lPlaca.setText("Placa do Veiculo");
 
         lChassi.setText("Chassi do Veiculo");
 
-        tfNome.setEditable(false);
+        tfNomeModelo.setEditable(false);
 
         tfPlaca.setEditable(false);
 
@@ -209,7 +233,6 @@ public class FrmRevisao extends javax.swing.JDialog {
         lMoeda.setText("R$");
 
         tfValorTotal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        tfValorTotal.setEnabled(false);
 
         jLabel1.setText("Data Entrada");
 
@@ -246,7 +269,7 @@ public class FrmRevisao extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lNome)
-                            .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tfNomeModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lNEntrega)
                             .addComponent(tfNEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -283,7 +306,7 @@ public class FrmRevisao extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(tfChassi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(tfNomeModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -316,6 +339,11 @@ public class FrmRevisao extends javax.swing.JDialog {
         );
 
         bCancelar.setText("Cancelar");
+        bCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCancelarActionPerformed(evt);
+            }
+        });
 
         bConfirmar.setText("Confirmar");
         bConfirmar.addActionListener(new java.awt.event.ActionListener() {
@@ -355,13 +383,26 @@ public class FrmRevisao extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void preencherCampos() {
+        
+        Vector carro = (Vector) this.dadosEntrega.get(0);
+        
+        int numeroEntrega = Integer.parseInt(this.dadosEntrega.get(1).toString());
+        numeroEntrega = numeroEntrega + 1;
+        
+        this.tfNEntrega.setText("" + numeroEntrega);
+        this.tfNomeModelo.setText(carro.get(15).toString());
+        this.tfPlaca.setText(carro.get(0).toString());
+        
+    }
+
     private void rbMecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbMecActionPerformed
 
         ComboBoxModel modelo = null;
         try {
             modelo = new DefaultComboBoxModel(this.opcoesCombo("Mecanico"));
         } catch (ConexaoException ex) {
-            Logger.getLogger(FrmRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
         this.cbResponsavel.setModel(modelo);
 
@@ -373,7 +414,7 @@ public class FrmRevisao extends javax.swing.JDialog {
         try {
             modelo = new DefaultComboBoxModel(this.opcoesCombo("Oficina"));
         } catch (ConexaoException ex) {
-            Logger.getLogger(FrmRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
         this.cbResponsavel.setModel(modelo);
 
@@ -383,12 +424,12 @@ public class FrmRevisao extends javax.swing.JDialog {
 
         if(this.rbMec.isSelected()){
 
-            this.controladoraFuncionario.setMarc(this.cbResponsavel.getSelectedIndex());
+            this.controlFunc.setMarc(this.cbResponsavel.getSelectedIndex());
         }
 
         else if(this.rbOfic.isSelected()){
 
-            this.controladoraOficina.setMarc(this.cbResponsavel.getSelectedIndex());
+            this.controlOf.setMarc(this.cbResponsavel.getSelectedIndex());
         }
     }//GEN-LAST:event_cbResponsavelItemStateChanged
 
@@ -398,18 +439,16 @@ public class FrmRevisao extends javax.swing.JDialog {
 
         if(this.verificaCamposVazios()){
             Vector novaRevisao = this.criarRevisao();
-            try {
-                this.controladoraRevisao.inserirRevisao(novaRevisao);
-            } catch (MinhaException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (ParseException ex){
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            }
+            this.controlRevisao.setNovaRevisao(novaRevisao);
+            this.setVisible(false);
         }
         
     }//GEN-LAST:event_bConfirmarActionPerformed
+
+    private void bCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelarActionPerformed
+
+        this.dispose();
+    }//GEN-LAST:event_bCancelarActionPerformed
 
 
 //
@@ -450,7 +489,7 @@ public class FrmRevisao extends javax.swing.JDialog {
     protected javax.swing.JTextArea taDescricao;
     protected javax.swing.JTextField tfChassi;
     protected javax.swing.JTextField tfNEntrega;
-    protected javax.swing.JTextField tfNome;
+    protected javax.swing.JTextField tfNomeModelo;
     protected javax.swing.JTextField tfPlaca;
     protected javax.swing.JTextField tfValorTotal;
     // End of variables declaration//GEN-END:variables

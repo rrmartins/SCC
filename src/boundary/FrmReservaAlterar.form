@@ -338,6 +338,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Sim"/>
           </Properties>
+          <Events>
+            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jRBSimFocusLost"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JRadioButton" name="jRBNao">
           <Properties>

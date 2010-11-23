@@ -3,6 +3,8 @@ package boundary;
 
 import control.ControladoraCarros;
 import control.ControladoraGrupoCarro;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -13,22 +15,27 @@ import util.ConexaoException;
 import util.MinhaException;
 
 
-public class FrmCadastroCarro extends javax.swing.JDialog {
+
+public class FrmCadastroCarro extends javax.swing.JDialog implements ActionListener{
 
     protected ControladoraGrupoCarro controladoraGrupoCarro = new ControladoraGrupoCarro();
     protected ControladoraCarros controladoraCarro = new ControladoraCarros();
     Vector gc = new Vector();
-    DefaultComboBoxModel grupoCarro = new DefaultComboBoxModel();
-
-    public FrmCadastroCarro(java.awt.Frame parent, boolean modal) throws ConexaoException {
-        super(parent, modal);
+    DefaultComboBoxModel gcarro = new DefaultComboBoxModel();
+    
+    
+    public FrmCadastroCarro() throws ConexaoException {
+        this.setModal(true);
         initComponents();
+        this.setLocationRelativeTo(null);
         gc = this.carregaGrupos();
-        for(int i = 0; i < gc.size(); i++){
-            grupoCarro.addElement(gc.elementAt(i));
+        for (int i = 0; i < gc.size(); i++){
+            gcarro.addElement(gc.elementAt(i));
         }
-        cb_grupoCarro.setModel(grupoCarro);
-        this.carregaGrupos();
+        cb_grupoCarro.setModel(gcarro);
+        this.b_Confirmar.addActionListener(this);
+        this.b_Cancelar.addActionListener(this);
+
     }
 
     private Vector carregaGrupos() throws ConexaoException {
@@ -164,6 +171,12 @@ public class FrmCadastroCarro extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelPrincipalLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(32, 32, 32)
+                        .addComponent(l_quilometragem)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tf_Quilometragem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelPrincipalLayout.createSequentialGroup()
                         .addComponent(l_modelo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tf_Modelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -172,26 +185,15 @@ public class FrmCadastroCarro extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tf_Chassi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelPrincipalLayout.createSequentialGroup()
-                        .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(panelPrincipalLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(26, 26, 26))
-                            .addGroup(panelPrincipalLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(tf_Marca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalLayout.createSequentialGroup()
-                                .addComponent(l_placa)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ft_Placa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalLayout.createSequentialGroup()
-                                .addComponent(l_quilometragem)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(tf_Quilometragem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tf_Marca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(l_placa)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ft_Placa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(l_grupoCarro)
@@ -205,18 +207,8 @@ public class FrmCadastroCarro extends javax.swing.JDialog {
         );
 
         b_Confirmar.setText("Confirmar");
-        b_Confirmar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                b_ConfirmarActionPerformed(evt);
-            }
-        });
 
         b_Cancelar.setText("Cancelar");
-        b_Cancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                b_CancelarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -310,56 +302,9 @@ public class FrmCadastroCarro extends javax.swing.JDialog {
 
 
     
-    private void b_ConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_ConfirmarActionPerformed
-
-        if(this.verificaCampos()){
-
-            Vector carroAtualizacao = this.montaObjeto();
-
-                try {
-                    this.controladoraCarro.inserirCarro(carroAtualizacao, this.controladoraGrupoCarro);
-                }catch (ConexaoException ex) {
-                    Logger.getLogger(FrmCadastroCarro.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                catch (SQLException erro)
-                {
-                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-                catch (MinhaException erro)
-                {
-                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-                finally
-                {
-                    this.setVisible(false);
-                }
-        }
-    }//GEN-LAST:event_b_ConfirmarActionPerformed
-
 
     
-    private void b_CancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_CancelarActionPerformed
 
-        this.dispose();
-    }//GEN-LAST:event_b_CancelarActionPerformed
-
-
-
-//
-//    public static void main(String args[]) {
-//
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                FrmCadastroCarro dialog = new FrmCadastroCarro(new javax.swing.JFrame(), true);
-//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-//                    public void windowClosing(java.awt.event.WindowEvent e) {
-//                        System.exit(0);
-//                    }
-//                });
-//                dialog.setVisible(true);
-//            }
-//        });
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected javax.swing.JButton b_Cancelar;
@@ -376,7 +321,7 @@ public class FrmCadastroCarro extends javax.swing.JDialog {
     private javax.swing.JLabel l_modelo;
     private javax.swing.JLabel l_placa;
     private javax.swing.JLabel l_quilometragem;
-    protected javax.swing.JPanel panelPrincipal;
+    private javax.swing.JPanel panelPrincipal;
     protected javax.swing.JRadioButton rb_Nao;
     protected javax.swing.JRadioButton rb_Sim;
     protected javax.swing.JTextField tf_Chassi;
@@ -384,5 +329,40 @@ public class FrmCadastroCarro extends javax.swing.JDialog {
     protected javax.swing.JTextField tf_Modelo;
     protected javax.swing.JTextField tf_Quilometragem;
     // End of variables declaration//GEN-END:variables
+
+    public void actionPerformed(ActionEvent e) {
+
+        if(e.getSource() == this.b_Confirmar){
+
+            if(this.verificaCampos()){
+
+                Vector carroAtualizacao = this.montaObjeto();
+
+                try {
+                    try {
+                        this.controladoraCarro.inserirCarro(carroAtualizacao, this.controladoraGrupoCarro);
+                    } catch (ConexaoException ex) {
+                        Logger.getLogger(FrmCadastroCarro.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                catch (SQLException erro)
+                {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+                catch (MinhaException erro)
+                {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+                finally
+                {
+                    this.setVisible(false);
+                }
+            }
+        }
+        else if(e.getSource() == this.b_Cancelar){
+
+            this.dispose();
+        }
+    }
 
 }

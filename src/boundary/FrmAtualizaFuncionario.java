@@ -19,7 +19,8 @@ public class FrmAtualizaFuncionario extends FrmCadastroFuncionario{
     private ControladoraFuncionario controladora;
 
     
-    public FrmAtualizaFuncionario(java.awt.Frame parent, boolean modal, ControladoraFuncionario controladoraFuncionario){
+    public FrmAtualizaFuncionario(ControladoraFuncionario controladoraFuncionario){
+        this.setModal(true);
         this.controladora = controladoraFuncionario;
         this.preencherCampos();
     }

@@ -20,4 +20,6 @@ public interface UFDao {
 
     public Vector<UF> obterUF() throws MinhaException, SQLException, ConexaoException;
 
+    public Vector<UF> obterUF(String nome) throws MinhaException, SQLException, ConexaoException;
+
 }

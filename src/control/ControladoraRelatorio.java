@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Vector;
+import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
@@ -13,7 +17,6 @@ import net.sf.jasperreports.engine.JRException;
 import util.Conexao;
 import util.ConexaoException;
 import util.MinhaException;
-import java.util.*;
 
 
 /***
@@ -41,7 +44,7 @@ public class ControladoraRelatorio {
     public void setConnection(Conexao conexao) {
         this.conexao = conexao;
     }
-    
+
     /**
      * Carrega o relatorio CarroMaisLocadoPorUmCliente.jasper
      * @param nomeRelatorio
@@ -49,9 +52,9 @@ public class ControladoraRelatorio {
      * @param paramentroFinal
      * @throws MinhaException
      * @throws SQLException
-     * @throws ConexaoException 
+     * @throws ConexaoException
      */
-   
+
     @SuppressWarnings("unchecked")
     public void relatorio(String nomeRelatorio, String paramentroInicial, String paramentroFinal, Vector usuario) throws MinhaException, SQLException, ConexaoException, ParseException{
 
@@ -72,7 +75,7 @@ public class ControladoraRelatorio {
 
         try {
             conexao = FabricaConexao.obterConexao();
-            String url = System.getProperty("user.dir") + "/src/Relatorios/"+nomeRelatorio+".jasper";
+            String url = System.getProperty("user.dir") + "/SCC/Relatorios/"+nomeRelatorio+".jasper";
             HashMap parametro = new HashMap();
             parametro.put("data_inicio", dataInicio);
             parametro.put("data_fim", dataFim);
@@ -83,18 +86,53 @@ public class ControladoraRelatorio {
             this.conexao.close();
         } catch (JRException ex)
         {
-            
+
            throw new MinhaException( "Não foi possivel gerar relatório.\nMSG:" + ex.getMessage());
 
         }
-        
+
+    }
+
+    public void relatorio(String nomeRelatorio, String data, Vector usuario) throws MinhaException, SQLException, ConexaoException, ParseException{
+
+        SimpleDateFormat formatBra = null;
+        Date dataA = new Date();
+        formatBra = new SimpleDateFormat("dd/MM/yyyy");
+        try
+          {
+             DateFormat formatter = formatBra;
+             dataA = formatter.parse(data);
+          }
+          catch(ParseException e)
+          {
+             e.printStackTrace();
+          }
+
+        try {
+            conexao = FabricaConexao.obterConexao();
+            String url = System.getProperty("user.dir") + "/SCC/Relatorios/"+nomeRelatorio+".jasper";
+            HashMap parametro = new HashMap();
+            parametro.put("data", dataA);
+            parametro.put("nomeFuncionario", usuario.get(3).toString());
+            parametro.put("tipoFuncionario", usuario.get(2).toString());
+            JasperPrint jp = JasperFillManager.fillReport(url, parametro, conexao.getConnection());
+            JasperViewer.viewReport(jp, false);
+            this.conexao.close();
+        } catch (JRException ex)
+        {
+
+           throw new MinhaException( "Não foi possivel gerar relatório.\nMSG:" + ex.getMessage());
+
+        }
+
     }
 
     public void relatorio(String nomeRelatorio, Vector usuario) throws MinhaException, SQLException, ConexaoException, ParseException{
 
         try {
             conexao = FabricaConexao.obterConexao();
-            String url = System.getProperty("user.dir") + "/src/Relatorios/"+nomeRelatorio+".jasper";
+            
+            String url = System.getProperty("user.dir") + "/SCC/Relatorios/"+nomeRelatorio+".jasper";
             HashMap parametro = new HashMap();
             parametro.put("nomeFuncionario", usuario.get(3).toString());
             parametro.put("tipoFuncionario", usuario.get(2).toString());
@@ -103,7 +141,7 @@ public class ControladoraRelatorio {
             this.conexao.close();
         } catch (JRException ex)
         {
-            //ex.printStackTrace();
+            ex.printStackTrace();
            throw new MinhaException( "Não foi possivel gerar relatório.\nMSG:" + ex.getMessage());
 
         }
@@ -115,7 +153,7 @@ public class ControladoraRelatorio {
         nomeRelatorio = "GeraPagamento";
         try {
             conexao = FabricaConexao.obterConexao();
-            String url = System.getProperty("user.dir") + "/src/Relatorios/"+nomeRelatorio+".jasper";
+            String url = System.getProperty("user.dir") + "/SCC/Relatorios/"+nomeRelatorio+".jasper";
             HashMap parametro = new HashMap();
             parametro.put("nomeFuncionario", usuario.get(3).toString());
             parametro.put("tipoFuncionario", usuario.get(2).toString());
@@ -125,8 +163,8 @@ public class ControladoraRelatorio {
             this.conexao.close();
         } catch (JRException ex)
         {
-
-           throw new MinhaException( "Não foi possivel gerar relatório.\nMSG:" + ex.getMessage());
+            ex.printStackTrace();
+         //  throw new MinhaException( "Não foi possivel gerar relatório.\nMSG:" + ex.getMessage());
 
         }
 

@@ -1,5 +1,6 @@
 package control;
 
+import dao.ClienteDao;
 import dao.FabricaDao;
 import dao.GrupoCarroDao;
 import dao.ReservaDao;
@@ -21,12 +22,14 @@ public class ControladoraReserva {
 
     private ControladoraGrupoCarro controladoraGrupoCarro = new ControladoraGrupoCarro();
     private ReservaDao reservaDao;
+    private ClienteDao clieDao;
     private Vector<GrupoCarro> grupoCar;
     private GrupoCarro gCar;
     private TipoCarro tCar;
     private TipoCarroDao tipoCarDao;
     private GrupoCarroDao grupoCarroDao;
     private Vector<Reserva> vetReservas = new Vector<Reserva>();
+    private Vector<Cliente> vetCliente = new Vector<Cliente>();
     private int marc;
     
 
@@ -81,9 +84,10 @@ public class ControladoraReserva {
         reserva.setSituacao(false);
     }
 
-    public Vector obterCliente(String cpf) throws ConexaoException, SQLException, MinhaException {
-        Vector client = new Vector();
-        return client;
+    private Vector<Cliente> obterCliente(String nomeCliente) throws ConexaoException, SQLException, MinhaException {
+        vetCliente = clieDao.obterCodCliente(nomeCliente);
+
+        return vetCliente;
     }
 
     private Vector criarLinhaAcessorio(Acessorio acessorio) {
@@ -139,6 +143,24 @@ public class ControladoraReserva {
         return tCar;
     }
 
+    public Vector obterCodCliente(String nomeCliente) throws ConexaoException, SQLException, MinhaException {
+
+        Vector<Cliente> clien = obterCliente(nomeCliente);
+
+        Vector linhas = new Vector();
+
+        // Montando as linhas
+        for (int i = 0; i < clien.size(); i++) {
+            Cliente cli = clien.get(i);
+
+            linhas.addElement(cli.getCodCliente());
+
+        }
+
+        return linhas;
+
+    }
+
     public int quantReservasPorData(Date dataL, Date dataE, Vector grupo) throws MinhaException, SQLException, ParseException, ConexaoException{
 
         GrupoCarro grupoCarro = new GrupoCarro();
@@ -151,7 +173,7 @@ public class ControladoraReserva {
         return nItens;
     }
 
-    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(Date dataL, Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException{
+    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(Date dataL, Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException, ParseException{
 
         reservaDao = FabricaDao.getReservaDao("JDBC");
         this.vetReservas = reservaDao.selecionarReservasPorIntervaloDeDatas(dataL, dataE, grupoCarro);
@@ -186,8 +208,8 @@ public class ControladoraReserva {
         Vector linha = new Vector();
         boolean cobertura, situacao;
         linha.addElement(res.getCodReserva());
-        linha.addElement(res.getGrupoCarro().getCodGrupoCarro());
-        linha.addElement(res.getCliente().getCodCliente());
+        linha.addElement(res.getGrupoCarro().getNomeGrupo());
+        linha.addElement(res.getCliente().getNome());
         linha.addElement(res.getDataLocacao());
         linha.addElement(res.getDataEntrega());
         linha.addElement(res.getHoraLocacao());

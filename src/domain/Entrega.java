@@ -1,6 +1,8 @@
 package domain;
 
+import java.sql.Time;
 import java.util.Date;
+
 
 public class Entrega {
 
@@ -10,7 +12,7 @@ public class Entrega {
 
     private Date dataEntrega;
 
-    private String horaEntrega;
+    private Time horaEntrega;
 
     private Locacao codLocacao;
 
@@ -32,14 +34,6 @@ public class Entrega {
         this.mLocacao = mLocacao;
     }
 
-    public int getQuantidadeVezes() {
-        return quantidadeVezes;
-    }
-
-    public void setQuantidadeVezes(int quantidadeVezes) {
-        this.quantidadeVezes = quantidadeVezes;
-    }
-
     public int getValorTotal() {
         return valorTotal;
     }
@@ -47,8 +41,6 @@ public class Entrega {
     public void setValorTotal(int valorTotal) {
         this.valorTotal = valorTotal;
     }
-
-    private int quantidadeVezes;
     
     private int valorTotal;
 
@@ -71,12 +63,12 @@ public class Entrega {
         this.dataEntrega = val;
     }
 
-    public String getHoraEntrega () {
+    public Time getHoraEntrega() {
         return horaEntrega;
     }
 
-    public void setHoraEntrega (String val) {
-        this.horaEntrega = val;
+    public void setHoraEntrega(Time horaEntrega) {
+        this.horaEntrega = horaEntrega;
     }
 
     public Locacao getLocacao () {

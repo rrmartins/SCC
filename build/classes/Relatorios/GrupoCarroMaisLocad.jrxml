@@ -23,9 +23,11 @@
      gc."preco_cobertura"
 FROM
      "locacao" lo,
-     "grupo_carro" gc
+     "grupo_carro" gc,
+     "carro" ca
 WHERE
-     lo.cod_grupo_carro = gc.cod_grupo_carro	;]]>
+     lo.cod_carro = ca.cod_carro and
+     ca.cod_grupo_carro = gc.cod_grupo_carro	;]]>
 	</queryString>
 	<field name="nome_grupo_carro" class="java.lang.String"/>
 	<field name="preco_diaria" class="java.math.BigDecimal"/>

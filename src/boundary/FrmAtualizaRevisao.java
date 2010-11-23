@@ -2,6 +2,8 @@
 
 package boundary;
 
+import control.ControladoraFuncionario;
+import control.ControladoraOficina;
 import control.ControladoraRevisao;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
@@ -17,8 +19,9 @@ public class FrmAtualizaRevisao extends FrmRevisao {
 
     private ControladoraRevisao controladora;
 
-    public FrmAtualizaRevisao(java.awt.Frame parent, boolean modal, ControladoraRevisao controladoraRevisao) {
-        super();
+    public FrmAtualizaRevisao(ControladoraFuncionario controladoraFuncionario, ControladoraOficina controladoraOficina, ControladoraRevisao controladoraRevisao, Vector dados) {
+        super(controladoraFuncionario, controladoraOficina, controladoraRevisao, dados);
+        this.setModal(true);
         this.controladora = controladoraRevisao;
         this.preencherCampos();
 
@@ -29,7 +32,7 @@ public class FrmAtualizaRevisao extends FrmRevisao {
         Vector campos = this.controladora.buscarDadosCompletos(this.controladora.getVetRevisoes().get(this.controladora.getMarc()));
 
         this.tfNEntrega.setText(campos.get(4).toString());
-        this.tfNome.setText(campos.get(1).toString());
+        this.tfNomeModelo.setText(campos.get(1).toString());
         this.tfPlaca.setText(campos.get(2).toString());
         this.tfChassi.setText(campos.get(3).toString());
         this.taDescricao.setText(campos.get(7).toString());
@@ -45,7 +48,7 @@ public class FrmAtualizaRevisao extends FrmRevisao {
             this.rbOfic.setSelected(true);
             this.cbResponsavel.setSelectedItem(campos.get(6).toString());
         }
-
+        
     }
 
 
@@ -75,10 +78,10 @@ public class FrmAtualizaRevisao extends FrmRevisao {
                 }
 
             }
-
+            
         }
         else if(e.getSource() == this.bCancelar)
-            this.preencherCampos();
+            this.dispose();
     }
 
 

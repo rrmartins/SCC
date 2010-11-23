@@ -5,6 +5,8 @@ package boundary;
 import control.ControladoraAcessorio;
 import control.ControladoraGrupoCarro;
 import control.ControladoraTipoCarro;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Vector;
@@ -21,11 +23,11 @@ import util.MinhaException;
 
 
 
-public class FrmCadastroGrupoCarro extends javax.swing.JDialog {
+public class FrmCadastroGrupoCarro extends javax.swing.JDialog implements ActionListener{
 
     protected ControladoraGrupoCarro controladoraGrupoCarro = new ControladoraGrupoCarro();
     protected ControladoraAcessorio controladoraAcessorio = new ControladoraAcessorio();
-    private ControladoraTipoCarro controladoraTipoCarro = new ControladoraTipoCarro();
+    protected  ControladoraTipoCarro controladoraTipoCarro = new ControladoraTipoCarro();
     
     
     
@@ -82,11 +84,13 @@ public class FrmCadastroGrupoCarro extends javax.swing.JDialog {
 
     
     @SuppressWarnings("unchecked")
-    public FrmCadastroGrupoCarro(java.awt.Frame parent, boolean modal) throws ConexaoException {
-        super(parent, modal);
+    public FrmCadastroGrupoCarro() throws ConexaoException {
+        this.setModal(true);
         initComponents();
         this.setarComponentesComboBox();
         this.setLocationRelativeTo(null);
+        this.bCancelar.addActionListener(this);
+        this.bConfirmar.addActionListener(this);
     }
 
 
@@ -229,21 +233,11 @@ public class FrmCadastroGrupoCarro extends javax.swing.JDialog {
         bConfirmar.setMaximumSize(new java.awt.Dimension(80, 22));
         bConfirmar.setMinimumSize(new java.awt.Dimension(80, 22));
         bConfirmar.setPreferredSize(new java.awt.Dimension(80, 22));
-        bConfirmar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bConfirmarActionPerformed(evt);
-            }
-        });
 
         bCancelar.setText("Cancelar");
         bCancelar.setMaximumSize(new java.awt.Dimension(80, 22));
         bCancelar.setMinimumSize(new java.awt.Dimension(80, 22));
         bCancelar.setPreferredSize(new java.awt.Dimension(80, 22));
-        bCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bCancelarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -303,80 +297,38 @@ public class FrmCadastroGrupoCarro extends javax.swing.JDialog {
     
     
 
-    private void bConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConfirmarActionPerformed
-
-            Vector grupo = this.criarGrupo();
-            
-            if(grupo != null){
-             
-                try {
-                    this.controladoraGrupoCarro.inserirGrupoCarro(grupo, this.controladoraTipoCarro, this.acessoriosGrupo);
-                    this.setVisible(false);
-                }catch (ConexaoException ex) {
-                    Logger.getLogger(FrmCadastroGrupoCarro.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (MinhaException ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                } catch (ParseException ex) {
-                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-       
-    }//GEN-LAST:event_bConfirmarActionPerformed
-
-private void bCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelarActionPerformed
-
-    this.dispose();
-    
-}//GEN-LAST:event_bCancelarActionPerformed
-
 private void itemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_itemStateChanged
 
     this.controladoraTipoCarro.setMarc(this.jcb_TipoCarro.getSelectedIndex());
 
 }//GEN-LAST:event_itemStateChanged
 
-
-    
-//
-//    public static void main(String args[]) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-//
-//        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new FrmCadastroGrupoCarro(null, true).setVisible(true);
-//            }
-//        });
-//    }
-
-    
+  
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bCancelar;
-    private javax.swing.JButton bConfirmar;
-    private javax.swing.JList jLAcessorios;
+    protected javax.swing.JButton bCancelar;
+    protected javax.swing.JButton bConfirmar;
+    protected javax.swing.JList jLAcessorios;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton jb_InserirAcessorio;
-    private javax.swing.JComboBox jcb_TipoCarro;
-    private javax.swing.JTextField jtfPrecoCobertura;
-    private javax.swing.JTextField jtf_NomeGrupo;
-    private javax.swing.JTextField jtf_PrecoDiariaQuilometrada;
-    private javax.swing.JTextField jtf_precoDiaria;
+    protected javax.swing.JButton jb_InserirAcessorio;
+    protected javax.swing.JComboBox jcb_TipoCarro;
+    protected javax.swing.JTextField jtfPrecoCobertura;
+    protected javax.swing.JTextField jtf_NomeGrupo;
+    protected javax.swing.JTextField jtf_PrecoDiariaQuilometrada;
+    protected javax.swing.JTextField jtf_precoDiaria;
     private javax.swing.JLabel l_PrecoDiariaQuilometrada;
     private javax.swing.JLabel l_TipoCarro;
     private javax.swing.JLabel l_nomeGrupo;
     private javax.swing.JLabel l_precoCobertura;
     private javax.swing.JLabel l_precoDiaria;
-    private javax.swing.JTextField tf_AdicionalQuilometro;
+    protected javax.swing.JTextField tf_AdicionalQuilometro;
     // End of variables declaration//GEN-END:variables
 
-    private Vector criarGrupo() {
+    public Vector criarGrupo() {
 
         if(this.verificaCamposVazios()){
 
@@ -394,7 +346,7 @@ private void itemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_i
         return null;
     }
 
-    private boolean verificaCamposVazios() {
+    public boolean verificaCamposVazios() {
 
         if(!this.jtf_NomeGrupo.getText().isEmpty()){
             if(!this.jtf_precoDiaria.getText().isEmpty()){
@@ -423,6 +375,35 @@ private void itemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_i
             JOptionPane.showMessageDialog(null, "É preciso preencher o campo Nome do grupo de carro !", "Atenção", JOptionPane.INFORMATION_MESSAGE);
 
         return false;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+
+        if(e.getSource() == this.bConfirmar){
+
+            Vector grupo = this.criarGrupo();
+
+            if(grupo != null){
+
+                try {
+                    try {
+                        this.controladoraGrupoCarro.inserirGrupoCarro(grupo, this.controladoraTipoCarro, this.acessoriosGrupo);
+                    } catch (ConexaoException ex) {
+                        Logger.getLogger(FrmCadastroGrupoCarro.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    this.setVisible(false);
+                } catch (MinhaException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (ParseException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+        else if(e.getSource() == this.bCancelar){
+            this.dispose();
+        }
     }
 
 

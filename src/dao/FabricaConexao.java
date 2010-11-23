@@ -26,7 +26,7 @@ public class FabricaConexao {
     }
 
     public static Conexao obterConexao() throws SQLException, ConexaoException {
-        DriverInterface driver = new PostGresNativeDriver("scc", "postgres", "natali");
+        DriverInterface driver = new PostGresNativeDriver("scc", "scc", "Postgre2010");
         return driver.obterConexaoRelatorio();
     }
 }

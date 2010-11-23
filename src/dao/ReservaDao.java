@@ -23,7 +23,7 @@ public interface ReservaDao {
 
     public void inserirReserva(Reserva reserva) throws SQLException, MinhaException, ParseException, ConexaoException;
 
-    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(Date dataL, Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException;
+    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(Date dataL, Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException, ParseException;
 
     public Vector<Reserva> obterReservas(String texto) throws SQLException,ConexaoException, ClassNotFoundException, MinhaException;
 

@@ -309,7 +309,9 @@ public class FrmInserirAcessorio extends javax.swing.JDialog {
 
     private void removerItensVetor() {
 
-        for(int i = 0; i < FrmInserirAcessorio.getAcessoriosEscolhidos().size(); i++){
+        int qAc = FrmInserirAcessorio.getAcessoriosEscolhidos().size();
+
+        for(int i = 0; i < qAc; i++){
             FrmInserirAcessorio.acessoriosEscolhidos.remove(i);
         }
     }

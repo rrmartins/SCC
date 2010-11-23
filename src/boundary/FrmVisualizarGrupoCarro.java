@@ -12,6 +12,7 @@
 package boundary;
 
 import domain.GrupoCarro;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 /**
@@ -28,11 +29,32 @@ public class FrmVisualizarGrupoCarro extends javax.swing.JDialog {
         preencherCampos(grupo);
     }
 
+
     private void preencherCampos(Vector grupo) {
+
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        String valorFormatado;
+        double valor = 0;
+
         this.jLNomeGC.setText(grupo.get(0).toString());
-        this.jLPD.setText(grupo.get(1).toString());
-        this.jLPDQ.setText(grupo.get(2).toString());
-        this.jLPDC.setText(grupo.get(3).toString());
+
+        valor = Double.parseDouble(grupo.get(1).toString());
+        valorFormatado = decimalFormat.format(valor);
+        this.jLPD.setText(valorFormatado);
+        valor = Double.parseDouble(grupo.get(2).toString());
+        valorFormatado = decimalFormat.format(valor);
+        this.jLPDQ.setText(valorFormatado);
+        valor = Double.parseDouble(grupo.get(3).toString());
+        valorFormatado = decimalFormat.format(valor);
+        this.jLPDC.setText(valorFormatado); 
+
+
+
+//        this.jLNomeGC.setText(grupo.get(0).toString());
+//        this.jLPD.setText(grupo.get(1).toString());
+//        this.jLPDQ.setText(grupo.get(2).toString());
+//        this.jLPDC.setText(grupo.get(3).toString());
     }
 
     /** This method is called from within the constructor to

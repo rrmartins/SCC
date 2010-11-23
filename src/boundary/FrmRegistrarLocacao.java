@@ -1,11 +1,13 @@
 
 package boundary;
 
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import control.ControladoraCarros;
 import control.ControladoraCliente;
 import control.ControladoraGrupoCarro;
 import control.ControladoraLocacao;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -14,44 +16,50 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import util.ConexaoException;
 import util.MinhaException;
 import util.Validador;
 
 
 
-public class FrmRegistrarLocacao extends javax.swing.JDialog{
+public class FrmRegistrarLocacao extends javax.swing.JDialog implements ActionListener{
 
-    private ControladoraLocacao controladoraLocacao = new ControladoraLocacao();
-    private ControladoraGrupoCarro controladoraGrupoCarro = new ControladoraGrupoCarro();
-    private ControladoraCliente controladoraCliente = new ControladoraCliente();
-    private ControladoraCarros controladoraCarros = new ControladoraCarros();
-    private Vector clienteTela = new Vector();
-    private Vector grupo = new Vector();
-    private Vector carro = new Vector();
-    private Vector cbGrupo = new Vector();
-    DefaultComboBoxModel grupoCarro = new DefaultComboBoxModel();
-    private double valorInicial, valorTotal;
+    protected ControladoraLocacao controladoraLocacao = new ControladoraLocacao();
+    protected ControladoraGrupoCarro controladoraGrupoCarro = new ControladoraGrupoCarro();
+    protected ControladoraCliente controladoraCliente = new ControladoraCliente();
+    protected ControladoraCarros controladoraCarros = new ControladoraCarros();
+
+    protected Vector clienteTela = new Vector();
+    protected Vector grupo = new Vector();
+    protected Vector carro = new Vector();
+
+    
+    private double valorInicial;
     DecimalFormat dcFormato = new DecimalFormat("#.00");
+    Vector gc = new Vector();
+    DefaultComboBoxModel gcarro = new DefaultComboBoxModel();
 
 
+    
     public FrmRegistrarLocacao() throws ConexaoException {
         initComponents();
+        gc = preencherComboGrupoCarro();
+        
+        for(int i = 0; i < gc.size(); i++){
+            gcarro.addElement(gc.elementAt(i));
+        }
+        cbGrupoCarro.setModel(gcarro);
+        
         this.setLocationRelativeTo(null);
         this.dataLocacao.setDate(new Date());
         this.dataEntrega.setDate(new Date());
         this.dataLocacao.setEnabled(false);
-        cbGrupo = this.preencherComboGrupoCarro();
-        for(int i = 0; i < cbGrupo.size(); i++){
-            grupoCarro.addElement(cbGrupo.elementAt(i));
-        }
-        cbGrupoCarro.setModel(grupoCarro);        
+        this.bConfirmar.addActionListener(this);
+        this.bCancelar.addActionListener(this);
+        
     }
 
 
@@ -140,7 +148,7 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
 
     public void calcularValor(String tipoDiaria)
     {
-        if(tipoDiaria.equals("Simples")){
+        if(tipoDiaria.equals("Diaria Simples")){
 
             double valor = (Double) this.grupo.get(2);
 
@@ -148,14 +156,15 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
             if(diaria == 0)
                 diaria = 1;
 
+            this.valorInicial = 0;
             this.valorInicial = valor * diaria;
 
             String valorFormatado = dcFormato.format(this.valorInicial);
 
-            this.lPrevisao.setText( valorFormatado);
+            //this.lPrevisao.setText( valorFormatado);
             this.tfValorTotal.setText(valorFormatado);
         }
-        else if(tipoDiaria.equals("Quilometrada")){
+        else if(tipoDiaria.equals("Diaria Quilometrada")){
 
             double valor = (Double) this.grupo.get(3);
 
@@ -163,78 +172,57 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
             if(diaria == 0)
                 diaria = 1;
 
+            this.valorInicial = 0;
             this.valorInicial = valor * diaria;
 
             String valorFormatado = dcFormato.format(this.valorInicial);
 
-            this.lPrevisao.setText( valorFormatado);
+            //this.lPrevisao.setText( valorFormatado);
             this.tfValorTotal.setText(valorFormatado);
         }
         
 
     }
 
-
+    
     
     public void setarCarro()
     {
         if(this.controladoraCarros.getCarros().size() > 0)
         {
-            this.carro = this.controladoraCarros.montarLinhasCarro(this.controladoraCarros.getCarros().get(this.controladoraCarros.getMarc()));
+            this.carro = this.controladoraCarros.montarCarroTela(this.controladoraCarros.getCarros().get(this.controladoraCarros.getMarc()));
             this.tfCarro.setText(this.carro.get(1).toString());
             this.tfPlacaCarro.setText(this.carro.get(2).toString());
-            this.calcularValor("Simples");
+            this.calcularValor("Diaria Simples");
         }
         
     }
 
-
     
-    public Vector criarLocacao()
-    {
-
-        Vector locacao = new Vector();
-
-        if(!this.ftCpf.getText().isEmpty())
-        {
-            if(this.dataLocacao.getDate().toString().equals("") )
-            {
-                if(this.dataEntrega.getDate().toString().equals(""))
-                {
-                    if(this.cbGrupoCarro.getSelectedIndex() < 0)
-                    {
-                        if(this.carro != null)
-                        {
-                            if((this.cbPlano.getSelectedItem().toString().equals("Diaria Simples")) || ((this.cbPlano.getSelectedItem().toString().equals("Diaria Quilometrada") && !this.tfQuilometragem.getText().isEmpty())))
-                            {
-                                if(!this.tfValorTotal.getText().isEmpty())
-                                {
-                                    int q = Integer.parseInt(this.tfQuilometragem.getText().toString());
-
-                                    if(this.cbCobertura.getSelectedItem().toString().equals("Sim")){
-
-
-                                        locacao.addElement(this.ftCpf.getText());
-                                        locacao.addElement(this.dataLocacao.getDate());
-                                        locacao.addElement(this.dataEntrega.getDate());
-                                        locacao.addElement(this.carro);
-                                        locacao.addElement(this.tfValorTotal.getText());
-                                        locacao.addElement(this.clienteTela);
-                                        locacao.addElement(this.cbHoraLocacao.getSelectedItem());
-                                        locacao.addElement(this.cbHoraEntrega.getSelectedItem());
-                                        locacao.addElement(this.tfValorTotal.getText());
-                                        locacao.addElement(this.cbCobertura.getSelectedItem());
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return locacao;
+    
+    public void criarLocacao(Vector locacao)
+    {       
+        locacao.addElement(this.ftCpf.getText());
+        locacao.addElement(this.dataLocacao.getDate());
+        locacao.addElement(this.dataEntrega.getDate());
+        locacao.addElement(this.carro);
+        locacao.addElement(this.tfValorTotal.getText());
+        locacao.addElement(this.clienteTela);
+        locacao.addElement(this.cbHoraLocacao.getSelectedItem());
+        locacao.addElement(this.cbHoraEntrega.getSelectedItem());
+        locacao.addElement(this.tfValorTotal.getText());
+        locacao.addElement(this.cbCobertura.getSelectedItem());
+        locacao.addElement(this.cbHoraLocacao.getSelectedItem());
+        locacao.addElement(this.cbHoraEntrega.getSelectedItem());
+        
+        if(!this.tfQuilometragem.getText().isEmpty())
+            locacao.addElement(this.tfQuilometragem.getText());
+        else
+            locacao.addElement(0);
+        locacao.addElement(this.grupo);
+        locacao.addElement(this.cbPlano.getSelectedItem());
+                                        
+  
 
     }
 
@@ -294,17 +282,13 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
         tfEmail = new javax.swing.JTextField();
         tfTel = new javax.swing.JTextField();
         ftCpf = new javax.swing.JFormattedTextField();
+        b_Busca = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("SCC - Locação");
         setResizable(false);
 
         bConfirmar.setText("Confirmar");
-        bConfirmar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bConfirmarActionPerformed(evt);
-            }
-        });
 
         bCancelar.setText("Cancelar");
 
@@ -345,6 +329,8 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
             }
         });
 
+        tfCarro.setEnabled(false);
+
         lCarro.setText("Carro");
 
         bVisualiza.setText("Visualizar Carros");
@@ -371,6 +357,11 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                 tfQuilometragemFocusLost(evt);
             }
         });
+        tfQuilometragem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tfQuilometragemKeyPressed(evt);
+            }
+        });
 
         lInfoKm.setText("KM");
 
@@ -384,6 +375,8 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
         });
 
         lPrevisao.setText("");
+
+        tfPlacaCarro.setEnabled(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -399,14 +392,14 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                             .addComponent(dataLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbHoraLocacao, 0, 88, Short.MAX_VALUE)
+                            .addComponent(cbHoraLocacao, 0, 120, Short.MAX_VALUE)
                             .addComponent(lHoraLocacao)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(lPlano)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 190, Short.MAX_VALUE))
-                    .addComponent(cbPlano, 0, 216, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE))
+                    .addComponent(cbPlano, 0, 248, Short.MAX_VALUE)
                     .addComponent(lGrupoCarro)
-                    .addComponent(cbGrupoCarro, 0, 216, Short.MAX_VALUE))
+                    .addComponent(cbGrupoCarro, 0, 248, Short.MAX_VALUE))
                 .addGap(49, 49, 49)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -419,16 +412,14 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                                         .addGap(13, 13, 13)
                                         .addComponent(lInfoKm))
                                     .addComponent(lQuilometragemPrev)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(tfCarro, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(tfCarro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
                                         .addGap(24, 24, 24)
                                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                             .addComponent(cbCobertura, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(lCobertura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                                         .addComponent(lPrevisao, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(29, 29, 29))
                                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -436,7 +427,7 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                                         .addComponent(tfPlacaCarro, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(bVisualiza)))))
-                        .addContainerGap(21, Short.MAX_VALUE))
+                        .addContainerGap(36, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lInfoEntrega)
@@ -544,9 +535,11 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        ftCpf.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                ftCpfFocusLost(evt);
+
+        b_Busca.setText("Buscar Cliente");
+        b_Busca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                b_BuscaActionPerformed(evt);
             }
         });
 
@@ -559,10 +552,14 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lCpf)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lNome)
-                            .addComponent(tfNome, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(ftCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(b_Busca))
+                            .addComponent(lNome, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tfNome, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lCidade)
                                     .addComponent(tfCidade, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE))
@@ -574,11 +571,11 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(tfEmail, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                                    .addComponent(tfEmail, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(lEndereco)
-                                            .addComponent(tfEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE))
+                                            .addComponent(tfEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(lNumero)
@@ -592,8 +589,7 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                                 .addComponent(lTel)
                                 .addComponent(tfTel)
                                 .addComponent(tfBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lBairro)))
-                    .addComponent(ftCpf, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lBairro))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -609,7 +605,9 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(lCpf)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ftCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(ftCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(b_Busca))
                                 .addGap(18, 18, 18)
                                 .addComponent(lNome))
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -650,7 +648,7 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(lValorTotal)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
                         .addComponent(lMoeda)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(tfValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -704,84 +702,6 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
 
 
     
-    private void ftCpfFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_ftCpfFocusLost
-
-        
-        String cpf = this.ftCpf.getText();
-        Validador valida = new Validador();
-        cpf = valida.tiraPontosCPF(cpf);
-
-        //if(valida.validarCPF(cpf)){
-
-            try{
-            try {
-                this.clienteTela = this.controladoraCliente.obterCliente(cpf);
-                //this.cliente = this.controladoraCliente.obterCliente(cpf);
-                //this.cliente.getEndereco().setCidade(this.controladoraCidade.selecionarCidadePorCodigo(this.cliente.getEndereco().getCidade().getCodCidade()));
-            } catch (ConexaoException ex) {
-                Logger.getLogger(FrmRegistrarLocacao.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-                //this.cliente = this.controladoraCliente.obterCliente(cpf);
-                //this.cliente.getEndereco().setCidade(this.controladoraCidade.selecionarCidadePorCodigo(this.cliente.getEndereco().getCidade().getCodCidade()));
-                
-
-                this.tfNome.setText(this.clienteTela.get(1).toString());
-                this.tfEndereco.setText(this.clienteTela.get(4).toString());
-                this.tfNumero.setText(this.clienteTela.get(5).toString());
-                this.tfBairro.setText(this.clienteTela.get(6).toString());
-                //this.tfCidade.setText(this.cliente.getEndereco().getCidade().getNomeCidade());
-                //this.tfUf.setText(this.cliente.getEndereco().getCidade().getUF().getUF());
-                this.tfEmail.setText(this.clienteTela.get(7).toString());
-                this.tfTel.setText(this.clienteTela.get(8).toString());
-            }
-            catch(SQLException erro){
-                JOptionPane.showMessageDialog(null, erro.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
-            }
-            catch(MinhaException erro){
-                JOptionPane.showMessageDialog(null, erro.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
-            }
-
-        //}
-        //else{
-            //JOptionPane.showMessageDialog(null, "CPF não encontrado");
-
-        //}*/
-         
-}//GEN-LAST:event_ftCpfFocusLost
-
-
-    
-    private void bConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConfirmarActionPerformed
-
-        if(dataEntrega.getDate().before(dataLocacao.getDate())){
-            JOptionPane.showMessageDialog(null, " A data de Entrega não pode ser antes da data de Locação !", "Informação", JOptionPane.INFORMATION_MESSAGE);
-            this.dataEntrega.setDate(new Date());
-            
-        }
-            
-        else
-        {
-            Vector locacaoInsert = this.criarLocacao();
-            try
-            {
-                this.controladoraLocacao.inserirLocacao(locacaoInsert);
-            }catch (ConexaoException ex) {
-                 Logger.getLogger(FrmRegistrarLocacao.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            catch(MinhaException erro)
-            {
-                JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-            catch(SQLException erro)
-            {
-                JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-            
-
-        }
-}//GEN-LAST:event_bConfirmarActionPerformed
-
 
     
     private void cbGrupoCarroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbGrupoCarroItemStateChanged
@@ -820,9 +740,9 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
             else
             {
                 try {
-                    new FrmVisualizaCarros(null, true, grupo, dataL, dataE, this.controladoraCarros);
+                    JDialog janela = new FrmVisualizaCarros(null, true, grupo, dataL, dataE, this.controladoraCarros);
                 } catch (ConexaoException ex) {
-                    Logger.getLogger(FrmRegistrarLocacao.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
 
                 this.setarCarro();
@@ -839,21 +759,40 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
     
     private void cbPlanoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPlanoItemStateChanged
 
-        if(this.cbPlano.getSelectedItem().toString().equals("Diaria Quilometrada"))
+        if(this.cbPlano.getSelectedItem().toString().equals("Diaria Quilometrada") && this.cbCobertura.getSelectedItem().toString().equals("Sim"))
         {
             this.tfQuilometragem.setEnabled(true);
-            this.calcularValor("Quilometrada");
+            this.calcularValor("Diaria Quilometrada");
+            this.calculaComCombertura();
+        }        
+        
+        else if(this.cbPlano.getSelectedItem().toString().equals("Diaria Quilometrada"))
+        {
+            this.tfQuilometragem.setEnabled(true);
+            this.calcularValor("Diaria Quilometrada");
         }
             
-        else
+        else if(this.cbPlano.getSelectedItem().toString().equals("Diaria Simples") && this.cbCobertura.getSelectedItem().toString().equals("Sim"))
         {
             this.tfQuilometragem.setEnabled(false);
             this.tfQuilometragem.setText("");
-            this.calcularValor("Simples");
+            this.calcularValor("Diaria Simples");
+            this.calculaComCombertura();
         }
+        
+        else if(this.cbPlano.getSelectedItem().toString().equals("Diaria Simples"))
+        {
+            this.tfQuilometragem.setEnabled(false);
+            this.tfQuilometragem.setText("");
+            this.calcularValor("Diaria Simples");         
+        }
+
             
 }//GEN-LAST:event_cbPlanoItemStateChanged
 
+    
+    
+    
     private void tfQuilometragemFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfQuilometragemFocusLost
 
         if(this.tfQuilometragem.getText().isEmpty())
@@ -866,62 +805,140 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
             if(diaria == 0)
                 diaria = 1;
             
-            //this.valorInicial = (this.carro.getGrupoCarro().getPrecoDiariaQuilometrada() * diaria) + (this.carro.getPrecoKm() * quilometragem);
+            double dQuilometrada = this.controladoraGrupoCarro.getVetGrupos().get(this.controladoraGrupoCarro.getMarc()).getPrecoDiariaQuilometrada();
+            double adciQ = this.controladoraGrupoCarro.getVetGrupos().get(this.controladoraGrupoCarro.getMarc()).getPrecoQuilometroAdicional();
+            this.valorInicial = (dQuilometrada * diaria) + (adciQ * quilometragem);
 
             String valorFomatado = dcFormato.format(this.valorInicial);
 
-            this.lPrevisao.setText(valorFomatado);
+            //this.lPrevisao.setText(valorFomatado);
             this.tfValorTotal.setText(valorFomatado);
 
         }
 }//GEN-LAST:event_tfQuilometragemFocusLost
 
 
+    
+    public void calculaComCombertura(){
+       
+        double cobertura = this.controladoraGrupoCarro.getVetGrupos().get(this.controladoraGrupoCarro.getMarc()).getPrecoCobertura();
+        double total =  this.valorInicial + cobertura;
 
+        String valorFormatado = dcFormato.format(total);
+         this.tfValorTotal.setText(valorFormatado);
+        
+    }
+
+    
     
     private void cbCoberturaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbCoberturaItemStateChanged
 
         if(this.cbCobertura.getSelectedItem().toString().equals("Sim")){
             
-            //double total = this.valorTotal = this.valorInicial + this.carro.getGrupoCarro().getPrecoCobertura();
-
-            //String valorFormatado = dcFormato.format(total);
-            //this.tfValorTotal.setText(valorFormatado);
+            this.calculaComCombertura();
         }
         else{
             
+            if(this.cbPlano.getSelectedItem().toString().equals("Diaria Simples")){
+                
+                this.tfQuilometragem.setEnabled(false);
+                this.tfQuilometragem.setText("");
+                this.calcularValor("Diaria Simples");  
+            }
+            else{
+                this.tfQuilometragem.setText("");
+                this.tfQuilometragem.setEnabled(true);
+                this.calcularValor("Diaria Quilometrada");  
+            }
+               
         }
 }//GEN-LAST:event_cbCoberturaItemStateChanged
 
 
-    /**
-    * @param args the command line arguments
-  
-    public static void main(String args[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 
-        //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    public void confereCpf() throws ConexaoException{
 
-        UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+        String cpf = this.ftCpf.getText();
+        Validador valida = new Validador();
+        cpf = valida.tiraPontosCPF(cpf);
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrmRegistrarLocacao().setVisible(true);
+        if (cpf.length() < 11) {
+            JOptionPane.showMessageDialog(null, "Digite o CPF corretamente", "Informação", JOptionPane.INFORMATION_MESSAGE);
+        }
+        else
+        {
+
+            if (valida.validarCPF(cpf)) {
+
+                try {
+
+                    this.clienteTela = this.controladoraCliente.obterCliente(cpf);
+
+                    this.tfNome.setText(this.clienteTela.get(1).toString());
+                    this.tfEndereco.setText(this.clienteTela.get(4).toString());
+                    this.tfNumero.setText(this.clienteTela.get(5).toString());
+                    this.tfBairro.setText(this.clienteTela.get(6).toString());
+                    this.tfCidade.setText(this.clienteTela.get(11).toString());
+                    this.tfUf.setText(this.clienteTela.get(12).toString());
+                    this.tfEmail.setText(this.clienteTela.get(7).toString());
+                    this.tfTel.setText(this.clienteTela.get(8).toString());
+
+                }
+                catch (SQLException erro)
+                {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+                    this.ftCpf.setText("");
+                }
+                catch (MinhaException erro)
+                {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+                    this.ftCpf.setText("");
+                }
+
             }
-        });
+            else
+            {
+                JOptionPane.showMessageDialog(null, "CPF não encontrado", "Erro", JOptionPane.ERROR_MESSAGE);
+                this.ftCpf.setText("");
+            }
+        }
     }
-  */
+    
+    
+private void b_BuscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_BuscaActionPerformed
+        try {
+            this.confereCpf();
+        } catch (ConexaoException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+    
+}//GEN-LAST:event_b_BuscaActionPerformed
+
+private void tfQuilometragemKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tfQuilometragemKeyPressed
+
+    if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+        this.tfQuilometragemFocusLost(null);
+
+}//GEN-LAST:event_tfQuilometragemKeyPressed
+
+
+
+
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton bCancelar;
-    private javax.swing.JButton bConfirmar;
+    protected javax.swing.JButton bCancelar;
+    protected javax.swing.JButton bConfirmar;
     private javax.swing.JButton bVisualiza;
-    private javax.swing.JComboBox cbCobertura;
-    private javax.swing.JComboBox cbGrupoCarro;
-    private javax.swing.JComboBox cbHoraEntrega;
-    private javax.swing.JComboBox cbHoraLocacao;
-    private javax.swing.JComboBox cbPlano;
-    private com.toedter.calendar.JDateChooser dataEntrega;
-    private com.toedter.calendar.JDateChooser dataLocacao;
-    private javax.swing.JFormattedTextField ftCpf;
+    private javax.swing.JButton b_Busca;
+    protected javax.swing.JComboBox cbCobertura;
+    protected javax.swing.JComboBox cbGrupoCarro;
+    protected javax.swing.JComboBox cbHoraEntrega;
+    protected javax.swing.JComboBox cbHoraLocacao;
+    protected javax.swing.JComboBox cbPlano;
+    protected com.toedter.calendar.JDateChooser dataEntrega;
+    protected com.toedter.calendar.JDateChooser dataLocacao;
+    protected javax.swing.JFormattedTextField ftCpf;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -949,19 +966,91 @@ public class FrmRegistrarLocacao extends javax.swing.JDialog{
     private javax.swing.JLabel lTel;
     private javax.swing.JLabel lUf;
     private javax.swing.JLabel lValorTotal;
-    private javax.swing.JTextField tfBairro;
-    private javax.swing.JTextField tfCarro;
-    private javax.swing.JTextField tfCidade;
-    private javax.swing.JTextField tfEmail;
-    private javax.swing.JTextField tfEndereco;
-    private javax.swing.JTextField tfNome;
-    private javax.swing.JTextField tfNumero;
-    private javax.swing.JTextField tfPlacaCarro;
-    private javax.swing.JTextField tfQuilometragem;
-    private javax.swing.JTextField tfTel;
-    private javax.swing.JTextField tfUf;
-    private javax.swing.JTextField tfValorTotal;
+    protected javax.swing.JTextField tfBairro;
+    protected javax.swing.JTextField tfCarro;
+    protected javax.swing.JTextField tfCidade;
+    protected javax.swing.JTextField tfEmail;
+    protected javax.swing.JTextField tfEndereco;
+    protected javax.swing.JTextField tfNome;
+    protected javax.swing.JTextField tfNumero;
+    protected javax.swing.JTextField tfPlacaCarro;
+    protected javax.swing.JTextField tfQuilometragem;
+    protected javax.swing.JTextField tfTel;
+    protected javax.swing.JTextField tfUf;
+    protected javax.swing.JTextField tfValorTotal;
     // End of variables declaration//GEN-END:variables
+
+    public boolean validaCampos() {
+        
+        if(!this.ftCpf.getText().isEmpty()){
+            
+            String cpf = this.ftCpf.getText();
+            Validador valida = new Validador();
+            cpf = valida.tiraPontosCPF(cpf);
+
+
+            if (!cpf.isEmpty() || cpf.length() == 11)
+                if (!this.tfCarro.getText().isEmpty())
+                    if ((this.cbPlano.getSelectedItem().toString().equals("Diaria Simples")) || ((this.cbPlano.getSelectedItem().toString().equals("Diaria Quilometrada") && !this.tfQuilometragem.getText().isEmpty())))
+                        if (!this.tfValorTotal.getText().isEmpty())
+                            return true;
+                        else 
+                            JOptionPane.showMessageDialog(null, "O Valor não pode estar Zerado", "Informação", JOptionPane.INFORMATION_MESSAGE);
+                    else
+                        JOptionPane.showMessageDialog(null, "Insira a Quantidade de quilometros", "Informação", JOptionPane.INFORMATION_MESSAGE);
+                else
+                    JOptionPane.showMessageDialog(null, "Escolha um carro", "Informação", JOptionPane.INFORMATION_MESSAGE);
+            else
+                JOptionPane.showMessageDialog(null, "Digite o CPF corretamente", "Informação", JOptionPane.INFORMATION_MESSAGE);
+            
+        }
+        else
+            JOptionPane.showMessageDialog(null, "Informe o CPF corretamente", "Informação", JOptionPane.INFORMATION_MESSAGE);
+        return false;
+        
+    }
+
+    public void actionPerformed(ActionEvent e) {
+
+        if(e.getSource() == this.bConfirmar){
+
+            if (dataEntrega.getDate().before(dataLocacao.getDate())) {
+                JOptionPane.showMessageDialog(null, " A data de Entrega não pode ser antes da data de Locação !", "Informação", JOptionPane.INFORMATION_MESSAGE);
+                this.dataEntrega.setDate(new Date());
+
+
+            } else {
+                if (this.validaCampos()) {
+
+                    Vector locacao = new Vector();
+                    this.criarLocacao(locacao);
+
+                    try
+                    {
+                        try {
+                            this.controladoraLocacao.inserirLocacao(locacao);
+                        } catch (ConexaoException ex) {
+                            JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
+                        this.dispose();
+                    }
+                    catch (MinhaException erro) {
+                        JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                    catch (SQLException erro) {
+                        JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                    catch (ParseException erro) {
+                        JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+            }
+        }
+        else if (e.getSource() == this.bCancelar){
+            this.dispose();
+        }
+    }
 
 
 }

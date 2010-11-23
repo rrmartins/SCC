@@ -12,10 +12,10 @@
 package boundary;
 
 import control.ControladoraLogin;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -26,7 +26,7 @@ import util.MinhaException;
  *
  * @author Rodrigo Martins
  */
-public class FrmLogin extends javax.swing.JFrame {
+public class FrmLogin extends javax.swing.JFrame{
 
     private ControladoraLogin controlLogin = new ControladoraLogin();
     private Vector usuarioTipo = new Vector();
@@ -48,6 +48,7 @@ public class FrmLogin extends javax.swing.JFrame {
     public FrmLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setIconImage(new ImageIcon(getClass().getResource("/img/logo.png")).getImage());
     }
 
     /** This method is called from within the constructor to
@@ -81,13 +82,26 @@ public class FrmLogin extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Comic Sans MS", 1, 18));
         jLabel2.setText("Senha:");
 
-        jTFLogin.setText("rrmartins");
+        jTFLogin.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTFLoginKeyReleased(evt);
+            }
+        });
 
-        jPFSenha.setText("123456");
+        jPFSenha.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jPFSenhaKeyReleased(evt);
+            }
+        });
 
         jLabel3.setText("Tipo:");
 
         jCBTipo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Funcionario", "Cliente" }));
+        jCBTipo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jCBTipoKeyPressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -149,13 +163,15 @@ public class FrmLogin extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(jBCancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBLogar))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jBLogar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -184,7 +200,7 @@ public class FrmLogin extends javax.swing.JFrame {
 
         if (!this.jTFLogin.getText().isEmpty())
         {
-            if (!this.jPFSenha.getPassword().toString().isEmpty())
+            if (this.jPFSenha.getPassword().length > 0)
             {
                 String log = (new String(this.jPFSenha.getPassword()));
                 Vector login = new Vector();
@@ -192,6 +208,7 @@ public class FrmLogin extends javax.swing.JFrame {
                 login.addElement(this.jTFLogin.getText());
                 login.addElement(log);
                 login.addElement(this.jCBTipo.getSelectedItem());
+
                 if (login.get(0).equals("admin") && login.get(1).equals("admin")){
                     if (this.jCBTipo.getSelectedItem().equals("Funcionario")) {
                             this.usuarioTipo.addElement("Funcionario");
@@ -220,18 +237,40 @@ public class FrmLogin extends javax.swing.JFrame {
                             new FrmPrincipalSCC(usuarioTipo,usuario).setVisible(true);
 
                         } catch (MinhaException ex) {
-                            Logger.getLogger(FrmLogin.class.getName()).log(Level.SEVERE, null, ex);
+                            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                         }
                     } catch (ConexaoException ex) {
-                        Logger.getLogger(FrmLogin.class.getName()).log(Level.SEVERE, null, ex);
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                     } catch (SQLException ex) {
-                        Logger.getLogger(FrmLogin.class.getName()).log(Level.SEVERE, null, ex);
+                        JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                     }
                 }
              }
+            else
+                JOptionPane.showMessageDialog(this, "Informe o Login/Senha !", "Informação", JOptionPane.INFORMATION_MESSAGE);
         }
+        else
+            JOptionPane.showMessageDialog(this, "Informe o Login/Senha !", "Informação", JOptionPane.INFORMATION_MESSAGE);
 
     }//GEN-LAST:event_jBLogarActionPerformed
+
+    private void jTFLoginKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFLoginKeyReleased
+
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+            this.jPFSenha.grabFocus();
+    }//GEN-LAST:event_jTFLoginKeyReleased
+
+    private void jPFSenhaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPFSenhaKeyReleased
+
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+            this.jCBTipo.grabFocus();
+    }//GEN-LAST:event_jPFSenhaKeyReleased
+
+    private void jCBTipoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jCBTipoKeyPressed
+
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+            this.jBLogarActionPerformed(null);
+    }//GEN-LAST:event_jCBTipoKeyPressed
 
     /**
     * @param args the command line arguments
@@ -257,5 +296,7 @@ public class FrmLogin extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTFLogin;
     // End of variables declaration//GEN-END:variables
+
+
 
 }

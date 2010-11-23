@@ -5,34 +5,84 @@ import domain.GrupoCarro;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Vector;
 import util.Conexao;
 import util.ConexaoException;
 import util.MinhaException;
 
+
+
 public class CarroJDBCDao implements CarroDao {
+
 
     private Conexao connection;
     private String sql;
 
-    public Conexao getConnection() {
+
+    public Conexao getConnection () {
         return connection;
     }
 
-    public void setConnection(Conexao val) {
+
+    public void setConnection (Conexao val) {
         this.connection = val;
     }
 
+    public Carro selecionarCarro(int codGrupoCar) throws MinhaException, SQLException, ConexaoException {
+
+        Carro car = new Carro();
+
+        this.connection = FabricaConexao.obterConexao();
+
+
+        sql = "select ca.* " +
+                "from carro ca " +
+                "where ca.cod_carro = ? ";
+
+        PreparedStatement pStmt = null;
+
+        pStmt = this.connection.prepareStatement(sql);
+
+        pStmt.setInt(1, codGrupoCar);
+
+
+        ResultSet result;
+        result = pStmt.executeQuery();
+
+        if (result == null || !result.next()) {
+            this.connection.close();
+            throw new MinhaException(" Não existe cliente cadastrado com esse CPF !");
+
+        } else {
+            car.setCodCarro(result.getInt("cod_carro"));
+            car.setMarca(result.getString("marca"));
+            car.setModelo(result.getString("modelo"));
+            car.setDescCarro(result.getString("desc_carro"));
+            car.setAno(result.getInt("ano"));
+            car.setPlaca(result.getString("placa"));
+            car.setChassi(result.getString("chassi"));
+            car.setDisponivel(result.getBoolean("disponivel"));
+            car.setQuilometragem(result.getInt("quilometragem"));
+
+        }
+
+        this.connection.close();
+
+
+        return car;
+    }
+
+
     public void inserirCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
+
         this.connection = FabricaConexao.obterConexao();
 
         try {
             this.connection.setAutoCommit(true);
 
 
-            this.sql = "INSERT INTO carro (cod_grupo_carro, marca, modelo, ano, placa, chassi, disponivel, quilometragem) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?); ";
+            this.sql = "INSERT INTO carro (cod_grupo_carro, marca, modelo, ano, placa, chassi, disponivel, quilometragem, desc_carro) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?); ";
 
             PreparedStatement pStmt = this.connection.prepareStatement(sql);
             pStmt.setInt(1, carro.getGrupoCarro().getCodGrupoCarro());
@@ -43,6 +93,7 @@ public class CarroJDBCDao implements CarroDao {
             pStmt.setString(6, carro.getChassi());
             pStmt.setBoolean(7, carro.getDisponivel());
             pStmt.setInt(8, carro.getQuilometragem());
+            pStmt.setString(9, carro.getModelo());
 
             pStmt.executeUpdate();
 
@@ -58,11 +109,12 @@ public class CarroJDBCDao implements CarroDao {
         }
     }
 
-    public Carro selecionarCarro(Carro carro) {
+    public Carro selecionarCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void removerCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
+
         this.connection = FabricaConexao.obterConexao();
 
         this.connection.setAutoCommit(true);
@@ -75,9 +127,11 @@ public class CarroJDBCDao implements CarroDao {
         pStmt.executeUpdate();
 
         this.connection.close();
+
     }
 
     public void alterarCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
+
         this.connection = FabricaConexao.obterConexao();
 
         this.connection.setAutoCommit(true);
@@ -90,7 +144,8 @@ public class CarroJDBCDao implements CarroDao {
                 "placa = ? , " +
                 "chassi = ? , " +
                 "disponivel = ? , " +
-                "quilometragem = ? " +
+                "quilometragem = ? , " +
+                "desc_carro = ? " +
                 "WHERE cod_carro = ? ;";
 
         PreparedStatement pStmt = this.connection.prepareStatement(sql);
@@ -103,14 +158,17 @@ public class CarroJDBCDao implements CarroDao {
         pStmt.setString(6, carro.getChassi());
         pStmt.setBoolean(7, carro.getDisponivel());
         pStmt.setInt(8, carro.getQuilometragem());
-        pStmt.setInt(9, carro.getCodCarro());
+        pStmt.setString(9, carro.getModelo());
+        pStmt.setInt(10, carro.getCodCarro());
 
         pStmt.executeUpdate();
 
         this.connection.close();
+
     }
 
-     public Vector<Carro> selecionarTodosCarros() throws MinhaException, SQLException, ConexaoException {
+    public Vector<Carro> selecionarTodosCarros() throws MinhaException, SQLException, ConexaoException {
+
         this.connection = FabricaConexao.obterConexao();
 
         this.sql = "SELECT c.cod_carro, c.cod_grupo_carro, c.marca, c.modelo, c.ano, c.placa, c.chassi, c.disponivel, c.quilometragem, gc.nome_grupo_carro " +
@@ -160,6 +218,111 @@ public class CarroJDBCDao implements CarroDao {
         return carrosGrupo;
     }
 
+    public Vector<Carro> selecionarCarrosPorGrupo(GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException {
+
+        this.connection = FabricaConexao.obterConexao();
+
+        this.sql = "SELECT c.* " +
+                "FROM carro c, " +
+                "grupo_carro gc " +
+                "WHERE c.cod_grupo_carro = gc.cod_grupo_carro and " +
+                " gc.cod_grupo_carro = ? and " +
+                " c.disponivel = TRUE ;";
+
+        PreparedStatement pStmt = this.connection.prepareStatement(this.sql);
+
+        pStmt.setInt(1, grupoCarro.getCodGrupoCarro());
+
+        ResultSet result = pStmt.executeQuery();
+
+        Vector<Carro> carrosGrupo = new Vector<Carro>();
+
+        if(result == null || !result.next())
+        {
+            this.connection.close();
+            return carrosGrupo;
+        }
+        else
+        {
+            do{
+
+                Carro carro = new Carro();
+
+                carro.setCodCarro(result.getInt("cod_carro"));
+                carro.setModelo(result.getString("modelo"));
+                carro.setPlaca(result.getString("placa"));
+                carro.setChassi(result.getString("chassi"));
+                carro.setDisponivel(result.getBoolean("disponivel"));
+                carro.setQuilometragem(result.getInt("quilometragem"));
+                carro.setGrupoCarro(grupoCarro);
+
+                carrosGrupo.addElement(carro);
+
+            }while(result.next());
+        }
+
+        this.connection.close();
+
+        return carrosGrupo;
+    }
+
+    public void mudarDisponibilidade(Conexao connection, Carro carro) throws SQLException{
+
+        try {
+
+            this.sql = "UPDATE carro " +
+                "SET disponivel = FALSE " +
+                "WHERE cod_carro = ? ;";
+
+            PreparedStatement pStmt = connection.prepareStatement(sql);
+            pStmt.setInt(1, carro.getCodCarro());
+
+            pStmt.executeUpdate();
+
+
+        } catch (SQLException erro) {
+
+            connection.rollback();
+            throw erro;
+
+        }
+
+
+    }
+
+
+    public void alterarKMDisponibilidade(Vector linha) throws SQLException, ConexaoException {
+        this.connection = FabricaConexao.obterConexao();
+
+        try
+        {
+            this.connection.setAutoCommit(false);
+            sql = "UPDATE carro SET "+
+                    "quilometragem = quilometragem + ?, "+
+                    "disponivel = true "+
+                    "where cod_carro = ?" ;
+
+            PreparedStatement prepSt = this.connection.prepareStatement(sql);
+
+            prepSt.setInt(1, Integer.parseInt(linha.get(1).toString()));
+            prepSt.setInt(2, Integer.parseInt(linha.get(6).toString()));
+
+            prepSt.executeUpdate();
+            this.connection.commit();
+
+        }
+        catch(SQLException erro)
+        {
+            this.connection.rollback();
+            erro.printStackTrace();
+        }
+        finally
+        {
+            this.connection.close();
+        }
+    }
+
+    /*
     public Carro selecionarCarro(int codGrupoCar) throws MinhaException, SQLException, ConexaoException {
 
         Carro car = new Carro();
@@ -167,7 +330,7 @@ public class CarroJDBCDao implements CarroDao {
         this.connection = FabricaConexao.obterConexao();
 
 
-        sql = "select ca.* " +
+        String sql = "select ca.* " +
                 "from carro ca " +
                 "where ca.cod_grupo_carro = ? ";
 
@@ -190,99 +353,20 @@ public class CarroJDBCDao implements CarroDao {
             car.setMarca(result.getString("marca"));
             car.setModelo(result.getString("modelo"));
             car.setDescCarro(result.getString("desc_carro"));
-            car.setAno(result.getInt("ano"));
+            car.setAno(result.getString("ano"));
             car.setPlaca(result.getString("placa"));
             car.setChassi(result.getString("chassi"));
             car.setDisponivel(result.getBoolean("disponivel"));
             car.setQuilometragem(result.getInt("quilometragem"));
-            
+            car.setValorLitroKM(result.getInt("valor_litro_km"));
         }
 
         this.connection.close();
 
 
         return car;
-    }
-
-    public Vector<Carro> selecionarCarrosPorGrupo(GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException {
-
-        this.connection = FabricaConexao.obterConexao();
-        
-
-        sql = "SELECT c.* " +
-                "FROM carro c, " +
-                     "grupo_carro gc " +
-                "WHERE c.cod_grupo_carro = gc.cod_grupo_carro and " +
-                     " gc.cod_grupo_carro = ? and " +
-                     " c.disponivel = TRUE ;";
-
-        PreparedStatement pStmt = this.connection.prepareStatement(sql);
-
-        pStmt.setInt(1, grupoCarro.getCodGrupoCarro());
-
-        ResultSet result = pStmt.executeQuery();
-
-        Vector<Carro> carrosGrupo = new Vector<Carro>();
-
-        if(result == null || !result.next())
-        {
-            this.connection.close();
-            return carrosGrupo;
-        }
-        else
-        {
-            do{
-
-                Carro carro = new Carro();
-
-                carro.setCodCarro(result.getInt("cod_carro"));
-                carro.setDescCarro(result.getString("desc_carro"));
-                carro.setPlaca(result.getString("placa"));
-                carro.setChassi(result.getString("chassi"));
-                carro.setDisponivel(result.getBoolean("disponivel"));
-                carro.setQuilometragem(result.getInt("quilometragem"));
-                carro.setGrupoCarro(grupoCarro);
+    }*/
 
 
-                carrosGrupo.addElement(carro);
-
-            }while(result.next());
-        }
-
-        this.connection.close();
-
-        return carrosGrupo;
-    }
-
-    public void alterarKMDisponibilidade(Vector linha) throws SQLException, ConexaoException {
-        this.connection = FabricaConexao.obterConexao();
-
-        try
-        {
-            this.connection.setAutoCommit(false);
-            sql = "UPDATE carro SET"+
-                    "quilometragem = quilometragem + ?, "+
-                    "disponivel = true "+
-                    "where cod_carro = ?;" ;
-
-            PreparedStatement prepSt = this.connection.prepareStatement(sql);
-
-            prepSt.setInt(1, Integer.parseInt(linha.get(1).toString()));
-            prepSt.setInt(2, Integer.parseInt(linha.get(6).toString()));
-
-            prepSt.executeUpdate();
-            this.connection.commit();
-
-        }
-        catch(SQLException erro)
-        {
-            this.connection.rollback();
-            throw erro;
-        }
-        finally
-        {
-            this.connection.close();
-        }
-    }
 }
 

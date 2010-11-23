@@ -97,6 +97,30 @@ public class FrmListagemCarros extends javax.swing.JDialog {
         tabelaTodosCarros.getColumnModel().getColumn(0).setMinWidth(60);
         tabelaTodosCarros.getColumnModel().getColumn(0).setPreferredWidth(60);
         tabelaTodosCarros.getColumnModel().getColumn(0).setMaxWidth(60);
+        tabelaTodosCarros.getColumnModel().getColumn(1).setMinWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(1).setMaxWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(2).setMinWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(2).setMaxWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(3).setMinWidth(50);
+        tabelaTodosCarros.getColumnModel().getColumn(3).setPreferredWidth(50);
+        tabelaTodosCarros.getColumnModel().getColumn(3).setMaxWidth(50);
+        tabelaTodosCarros.getColumnModel().getColumn(4).setMinWidth(90);
+        tabelaTodosCarros.getColumnModel().getColumn(4).setPreferredWidth(90);
+        tabelaTodosCarros.getColumnModel().getColumn(4).setMaxWidth(90);
+        tabelaTodosCarros.getColumnModel().getColumn(5).setMinWidth(70);
+        tabelaTodosCarros.getColumnModel().getColumn(5).setPreferredWidth(70);
+        tabelaTodosCarros.getColumnModel().getColumn(5).setMaxWidth(70);
+        tabelaTodosCarros.getColumnModel().getColumn(6).setMinWidth(110);
+        tabelaTodosCarros.getColumnModel().getColumn(6).setPreferredWidth(110);
+        tabelaTodosCarros.getColumnModel().getColumn(6).setMaxWidth(110);
+        tabelaTodosCarros.getColumnModel().getColumn(7).setMinWidth(90);
+        tabelaTodosCarros.getColumnModel().getColumn(7).setPreferredWidth(90);
+        tabelaTodosCarros.getColumnModel().getColumn(7).setMaxWidth(90);
+        tabelaTodosCarros.getColumnModel().getColumn(8).setMinWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(8).setPreferredWidth(100);
+        tabelaTodosCarros.getColumnModel().getColumn(8).setMaxWidth(100);
 
         b_Inserir.setText("Inserir");
         b_Inserir.addActionListener(new java.awt.event.ActionListener() {
@@ -125,15 +149,15 @@ public class FrmListagemCarros extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1066, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(b_Inserir, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(b_Alterar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(b_Remover, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(b_Remover, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 776, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,7 +177,7 @@ public class FrmListagemCarros extends javax.swing.JDialog {
 
     private void b_InserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_b_InserirActionPerformed
         try {
-            new FrmCadastroCarro(null, true).setVisible(true);
+            new FrmCadastroCarro().setVisible(true);
             this.limparTabela();
             this.preencherTabela();
         } catch (ConexaoException ex) {
@@ -173,7 +197,7 @@ public class FrmListagemCarros extends javax.swing.JDialog {
 
             JDialog janela = null;
             try {
-                janela = new FrmAtualizaCarro(null, true, this.controladoraCarros);
+                janela = new FrmAtualizaCarro( this.controladoraCarros);
                 janela.setVisible(true);
                 this.limparTabela();
                 this.preencherTabela();

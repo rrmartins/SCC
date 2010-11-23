@@ -1,13 +1,16 @@
 package control;
 
-
-import dao.*;
-import domain.*;
+import dao.AcessorioDao;
+import dao.FabricaDao;
+import domain.Acessorio;
+import domain.GrupoCarro;
+import groovyjarjarcommonscli.ParseException;
+import java.sql.SQLException;
+import java.util.Vector;
 import util.ConexaoException;
-import java.sql.*;
-import java.text.ParseException;
-import java.util.*;
 import util.MinhaException;
+
+
 
 public class ControladoraAcessorio {
 
@@ -25,6 +28,30 @@ public class ControladoraAcessorio {
 
     public ControladoraAcessorio() {
         this.acessorioDao = FabricaDao.getAcessorioDao("JDBC");
+    }
+
+    public Vector<Acessorio> selecionarAcessoriosGrupo(GrupoCarro gc) throws MinhaException, SQLException, ConexaoException{
+
+        this.acessorioDao = FabricaDao.getAcessorioDao("JDBC");
+        Vector acessorios = this.acessorioDao.selecionarAcessorioGrupo(gc);
+
+        return acessorios;
+
+    }
+
+
+    public Vector obterAcessoriosGrupo(GrupoCarro gc) throws MinhaException, SQLException, ConexaoException {
+
+        Vector linhasAcessorios = new Vector();
+        Vector<Acessorio> acessorioGrupo = this.selecionarAcessoriosGrupo(gc);
+
+        for (int i = 0; i < acessorioGrupo.size(); i++) {
+
+            Acessorio acessorio = acessorioGrupo.get(i);
+            linhasAcessorios.addElement(this.criarLinhaAcessorio(acessorio));
+        }
+        return linhasAcessorios;
+
     }
 
     public void inserirNovoAcessorio(Vector linha) throws MinhaException, SQLException, ConexaoException {

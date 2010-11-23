@@ -4,7 +4,9 @@ package control;
 
 import dao.FabricaDao;
 import dao.GrupoCarroDao;
+import dao.GrupoCarroJDBCDao;
 import domain.Acessorio;
+import domain.Carro;
 import domain.GrupoCarro;
 import domain.TipoCarro;
 import java.sql.SQLException;
@@ -17,6 +19,7 @@ import util.MinhaException;
 
 public class ControladoraGrupoCarro {
 
+    private GrupoCarro gc = new GrupoCarro();
     private Vector<GrupoCarro> vetGrupos = new Vector<GrupoCarro>();
     private int marc;
 
@@ -152,6 +155,17 @@ public class ControladoraGrupoCarro {
     }
 
 
+    public Vector dadosGrupo(Vector carro) throws SQLException, MinhaException, ConexaoException{
+
+        this.selecionarGrupoCarroPorCarro(carro);
+
+        Vector grupo = new Vector();
+        grupo.add(gc.getCodGrupoCarro());
+        grupo.add(gc.getNomeGrupo());
+
+        return grupo;
+    }
+
 
     private Vector<GrupoCarro> obterGrupoCarro() throws MinhaException, SQLException, ConexaoException {
 
@@ -203,6 +217,19 @@ public class ControladoraGrupoCarro {
         linha.add(this.vetGrupos.get(marc).getAcessorios());
 
         return linha;
+
+    }
+
+    public void selecionarGrupoCarroPorCarro(Vector carro) throws SQLException, MinhaException, ConexaoException{
+
+        Carro car = new Carro();
+        int codCarro = Integer.parseInt(carro.get(0).toString());
+        car.setCodCarro(codCarro);
+        car.setModelo(carro.get(1).toString());
+
+        GrupoCarroJDBCDao carroJDBCDao = new GrupoCarroJDBCDao();
+        this.gc = carroJDBCDao.selecionarGrupoCarroPorCarro(car);
+
 
     }
 

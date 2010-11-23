@@ -5,16 +5,13 @@ import dao.*;
 import domain.*;
 import util.ConexaoException;
 import java.sql.*;
-import java.text.ParseException;
 import java.util.*;
 import util.MinhaException;
 
 public class ControladoraPagamento {
 
     private PagamentoDao pagamentoDao;
-    private EntregaDao entregaDao;
     private ControladoraEntrega controlEntrega;
-    private Vector<Pagamento> vetPagamento;
     private Vector<Entrega> vetEntrega;
     private int marc;
 
@@ -28,7 +25,6 @@ public class ControladoraPagamento {
 
     public ControladoraPagamento() {
         this.pagamentoDao = FabricaDao.getPagamentoDao("JDBC");
-        this.entregaDao = FabricaDao.getEntregaDao("JDBC");
         this.controlEntrega = new ControladoraEntrega();
     }
 
@@ -42,6 +38,11 @@ public class ControladoraPagamento {
    
     private void atualizarPagamento(Pagamento paga, Vector linha, Vector entrega) {
 
+        java.util.Date dataAtual = new java.util.Date();
+        java.util.Date dataVencimento = new java.util.Date();
+
+        dataVencimento.setTime(dataAtual.getTime() + 10);
+
         Locacao loca = new Locacao();
         loca.setCodLocacao(Integer.parseInt(linha.get(0).toString()));
 
@@ -49,7 +50,8 @@ public class ControladoraPagamento {
         ent.setCodEntrega(Integer.parseInt(entrega.get(0).toString()));
         ent.setCodLocacao(loca);
 
-
+        paga.setDataEmissao(dataAtual);
+        paga.setDataVencimento(dataVencimento);
         paga.setQuantidadeVezes(Integer.parseInt(linha.get(5).toString()));
         paga.setEntrega(ent);
         paga.setValorTotal(Double.parseDouble(linha.get(4).toString()));

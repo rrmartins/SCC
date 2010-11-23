@@ -3,6 +3,7 @@ package domain;
 import java.sql.Time;
 import java.util.Date;
 
+
 public class Locacao {
 
     private int codLocacao;
@@ -19,23 +20,15 @@ public class Locacao {
 
     private int quilometragemPrevista;
 
-    private float valorPrevisto;
+    private double valorPrevisto;
 
     private boolean cobertura;
 
-    public boolean isConcluida() {
-        return concluida;
-    }
-
-    public void setConcluida(boolean concluida) {
-        this.concluida = concluida;
-    }
-
-    private boolean concluida;
-
-    private float valorTotal;
+    private double valorTotal;
 
     private Cliente mCliente;
+
+    private String plano;
 
     private GrupoCarro mGrupoCarro;
 
@@ -76,20 +69,20 @@ public class Locacao {
         this.dateLocacao = val;
     }
 
-    public Time getHoraEntrega () {
+    public Time getHoraEntrega() {
         return horaEntrega;
     }
 
-    public void setHoraEntrega (Time val) {
-        this.horaEntrega = val;
+    public void setHoraEntrega(Time horaEntrega) {
+        this.horaEntrega = horaEntrega;
     }
 
-    public Time getHoraLocacao () {
+    public Time getHoraLocacao() {
         return horaLocacao;
     }
 
-    public void setHoraLocacao (Time val) {
-        this.horaLocacao = val;
+    public void setHoraLocacao(Time horaLocacao) {
+        this.horaLocacao = horaLocacao;
     }
 
     public Carro getCarro () {
@@ -116,6 +109,14 @@ public class Locacao {
         this.mGrupoCarro = val;
     }
 
+    public String getPlano() {
+        return plano;
+    }
+
+    public void setPlano(String plano) {
+        this.plano = plano;
+    }
+
     public int getQuilometragemInicial () {
         return quilometragemInicial;
     }
@@ -132,20 +133,20 @@ public class Locacao {
         this.quilometragemPrevista = val;
     }
 
-    public float getValorPrevisto () {
+    public double getValorPrevisto() {
         return valorPrevisto;
     }
 
-    public void setValorPrevisto (float val) {
-        this.valorPrevisto = val;
+    public void setValorPrevisto(double valorPrevisto) {
+        this.valorPrevisto = valorPrevisto;
     }
 
-    public float getValorTotal () {
+    public double getValorTotal() {
         return valorTotal;
     }
 
-    public void setValorTotal (float val) {
-        this.valorTotal = val;
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
     public void adicionaEventual (Eventual eventual) {

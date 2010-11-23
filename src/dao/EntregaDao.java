@@ -1,6 +1,7 @@
 package dao;
 
 import domain.Entrega; 
+import domain.Revisao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Vector;

@@ -20,7 +20,7 @@ public class JdbcDriver implements DriverInterface {
         try
         {
             Class.forName("org.postgresql.Driver");
-            return DriverManager.getConnection("jdbc:postgresql://localhost:5432/scc_atual", "postgres", "natali");
+            return DriverManager.getConnection("jdbc:postgresql://localhost:5432/scc", "scc", "Postgre2010");
 
         }
         catch(ClassNotFoundException erro)
@@ -39,7 +39,7 @@ public class JdbcDriver implements DriverInterface {
             url = "jdbc:postgresql://localhost:5432/scc_atual";
             Class.forName("org.postgresql.Driver");
             Conexao conexao = new Conexao();
-            conexao.setConnection(DriverManager.getConnection(url, "postgres", "natali"));
+            conexao.setConnection(DriverManager.getConnection(url, "postgres", "Postgre2010"));
             return conexao;
         }catch(ClassNotFoundException erro){
             throw new ConexaoException(erro.getMessage());

@@ -6,6 +6,7 @@
 package dao;
 
 import domain.Acessorio;
+import domain.GrupoCarro;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -120,6 +121,39 @@ public class AcessorioJDBCDao implements AcessorioDao {
         ResultSet res = pstmt.executeQuery();
 
         Vector acessorios = new Vector();
+        while (res.next()) {
+            Acessorio acessorio = new Acessorio();
+            acessorio.setCodAcessorio(res.getInt("cod_acessorio"));
+            acessorio.setDescAcessorio(res.getString("descricao"));
+
+            acessorios.addElement(acessorio);
+        }
+        this.connection.close();
+        return acessorios;
+    }
+
+    public Vector<Acessorio> selecionarAcessorioGrupo(GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException{
+
+        String sql = "SELECT a.cod_acessorio, a.descricao " +
+                "FROM acessorio a, " +
+                "grupo_carro gc, " +
+                "acessorio_grupo_carro agc " +
+                "WHERE a.cod_acessorio = agc.cod_acessorio AND " +
+                "gc.cod_grupo_carro = agc.cod_grupo_carro AND " +
+                "gc.cod_grupo_carro = ? ;";
+
+        this.connection = FabricaConexao.obterConexao();
+
+        PreparedStatement pstmt = this.connection.prepareStatement(sql);
+        pstmt.setInt(1, grupoCarro.getCodGrupoCarro());
+
+        ResultSet res = pstmt.executeQuery();
+
+        Vector<Acessorio> acessorios = new Vector<Acessorio>();
+
+        if(res == null || !res.next())
+            return null;
+
         while (res.next()) {
             Acessorio acessorio = new Acessorio();
             acessorio.setCodAcessorio(res.getInt("cod_acessorio"));

@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import util.ConexaoException;
 import util.MinhaException;
@@ -168,8 +170,7 @@ public class FrmListagemClientes extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(lLista)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbOrdenacao, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -178,7 +179,8 @@ public class FrmListagemClientes extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(bAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(bRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(bRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -191,9 +193,9 @@ public class FrmListagemClientes extends javax.swing.JDialog {
                     .addComponent(bRemover)
                     .addComponent(bAlterar)
                     .addComponent(bInserir))
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -203,8 +205,7 @@ public class FrmListagemClientes extends javax.swing.JDialog {
     
 private void bInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bInserirActionPerformed
 
-    //JDialog janelaInsert = new FrmCadastroCliente(this, true);
-    JDialog janelaInsert = new FrmCadastroCliente(null,true);
+    JDialog janelaInsert = new FrmCadastroCliente();
     janelaInsert.setVisible(true);
     this.limparTabela();
         try {
@@ -219,13 +220,12 @@ private void bInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 private void bAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAlterarActionPerformed
 
     int selecionada = this.tabelaClientes.getSelectedRow();
-    if(selecionada < 0) {
-            JOptionPane.showMessageDialog(null, "Selecione um registro para fazer a Alteração !", "Atenção", JOptionPane.INFORMATION_MESSAGE);
-        }
+    if(selecionada < 0)
+        JOptionPane.showMessageDialog(null, "Selecione um registro para fazer a Alteração !", "Atenção", JOptionPane.INFORMATION_MESSAGE);
     else{
         this.controladoraCliente.setMarc(selecionada);
-
-        JDialog janela = new FrmAtualizaCliente(null,true,controladoraCliente);
+        
+        JDialog janela = new FrmAtualizaCliente(this.controladoraCliente);
         janela.setVisible(true);
         this.limparTabela();
             try {
@@ -273,32 +273,7 @@ private void bRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
 }//GEN-LAST:event_bRemoverActionPerformed
 
-
-//
-//    public static void main(String args[]) {
-//        try {
-//
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (ClassNotFoundException ex) {
-//            Logger.getLogger(FrmListagemClientes.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            Logger.getLogger(FrmListagemClientes.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            Logger.getLogger(FrmListagemClientes.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (UnsupportedLookAndFeelException ex) {
-//            Logger.getLogger(FrmListagemClientes.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new FrmListagemClientes().setVisible(true);
-//            }
-//        });
-//    }
-
-    
-
-    
+  
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAlterar;

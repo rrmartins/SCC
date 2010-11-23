@@ -190,6 +190,8 @@ public class ControladoraCliente {
         clienteBuscado.addElement(cliente.getTelefone());
         clienteBuscado.addElement(cliente.getCartaoCredito());
         clienteBuscado.addElement(cliente.getEndereco().getCidade().getCodCidade());
+        clienteBuscado.addElement(cliente.getEndereco().getCidade().getNomeCidade());
+        clienteBuscado.addElement(cliente.getEndereco().getCidade().getUF().getUF());
 
         return clienteBuscado;
 

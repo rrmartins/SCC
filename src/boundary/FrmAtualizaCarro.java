@@ -17,8 +17,8 @@ public class FrmAtualizaCarro extends FrmCadastroCarro implements ActionListener
 
 
     
-    public FrmAtualizaCarro(javax.swing.JFrame parent, boolean modal, ControladoraCarros controladoraCarros) throws ConexaoException {
-        super(parent, modal);
+    public FrmAtualizaCarro( ControladoraCarros controladoraCarros) throws ConexaoException {
+     this.setModal(true);
         this.controladoraCarro = controladoraCarros;
         this.preencherCampos();
         this.b_Confirmar.addActionListener(this);
@@ -59,11 +59,11 @@ public class FrmAtualizaCarro extends FrmCadastroCarro implements ActionListener
                 Vector carroAtualizacao = this.montaObjeto();
 
                 try {
-                
+                    try {
                         this.controladoraCarro.alterarCarro(carroAtualizacao, this.controladoraGrupoCarro);
-
-                }catch (ConexaoException ex) {
+                    } catch (ConexaoException ex) {
                         Logger.getLogger(FrmAtualizaCarro.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 catch (SQLException erro)
                 {

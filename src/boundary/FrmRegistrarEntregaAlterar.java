@@ -12,6 +12,9 @@
 package boundary;
 
 import control.ControladoraEntrega;
+import control.ControladoraFuncionario;
+import control.ControladoraOficina;
+import control.ControladoraRevisao;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -34,6 +37,13 @@ import util.Validador;
 public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
 
     private ControladoraEntrega controlEntrega = new ControladoraEntrega();
+    
+    private ControladoraFuncionario controladoraFuncionario = new ControladoraFuncionario();
+    private ControladoraOficina controladoraOficina = new ControladoraOficina();
+    private ControladoraRevisao controladoraRevisao = new ControladoraRevisao();
+    private Vector dadosEntrega;
+    
+    
     int codLocacao = 0;
     Vector usuarioTipo = new Vector();
     Vector usuario = new Vector();
@@ -642,7 +652,7 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
 
     private void jBInserirRevisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBInserirRevisaoActionPerformed
         // TODO add your handling code here:
-        FrmRevisao rev = new FrmRevisao();
+        FrmRevisao rev = new FrmRevisao(controladoraFuncionario, controladoraOficina, controladoraRevisao, dadosEntrega);
 
         int kmFinal, kmInicial, kmResult, valorRevisao;
         Date dataLocacao = null;

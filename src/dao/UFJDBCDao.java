@@ -128,5 +128,28 @@ public class UFJDBCDao implements UFDao {
         return ufs;
     }
 
+    public Vector<UF> obterUF(String nome) throws MinhaException, SQLException, ConexaoException {
+        sql = "select uf.sigla_uf, ci.nome_cidade "+
+                "from uf uf, " +
+                     "cidade ci "+
+                "where uf.sigla_uf = ci.sigla_uf and "+
+                    "ci.nome_cidade = '"+ nome +"';";
+
+        this.connection = FabricaConexao.obterConexao();
+
+        PreparedStatement pstmt = this.connection.prepareStatement(sql);
+        ResultSet res = pstmt.executeQuery();
+
+        Vector uf = new Vector();
+        while (res.next()) {
+            UF Uf = new UF();
+            Uf.setNomeUF(res.getString("sigla_uf"));
+
+            uf.addElement(Uf);
+        }
+        this.connection.close();
+        return uf;
+    }
+
 }
 

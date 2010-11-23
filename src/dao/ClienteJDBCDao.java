@@ -180,8 +180,10 @@ public class ClienteJDBCDao implements ClienteDao {
         this.connection = FabricaConexao.obterConexao();
 
         sql = "SELECT * " +
-                "FROM cliente " +
-                "WHERE cpf = ? ;";
+                "FROM cliente c, " +
+                "cidade cid " +
+                "WHERE c.cod_cidade = cid.cod_cidade AND " +
+                "c.cpf = ? ;";
 
         PreparedStatement pStmt = this.connection.prepareStatement(sql);
 
@@ -200,7 +202,12 @@ public class ClienteJDBCDao implements ClienteDao {
         }
         else
         {
+            UF uf = new UF();
+            uf.setUF(result.getString("sigla_uf"));
+
             cid.setCodCidade(result.getInt("cod_cidade"));
+            cid.setNomeCidade(result.getString("nome_cidade"));
+            cid.setUF(uf);
 
             endereco.setNomeRua(result.getString("rua"));
             endereco.setNumero(result.getInt("numero_casa"));
@@ -221,6 +228,7 @@ public class ClienteJDBCDao implements ClienteDao {
         this.connection.close();
 
         return cliente;
+
 
     }
 
@@ -356,6 +364,43 @@ public class ClienteJDBCDao implements ClienteDao {
         
         this.connection.close();
         
+        return clientes;
+    }
+
+    public Vector<Cliente> obterCodCliente(String nomeCliente) throws MinhaException, ConexaoException, SQLException {
+
+        this.connection = FabricaConexao.obterConexao();
+
+        sql = "select cl.cod_cliente " +
+                "from cliente cl " +
+                "where cl.nome = '"+nomeCliente+"';";
+
+        PreparedStatement pStmt = this.connection.prepareStatement(sql);
+
+        ResultSet result = pStmt.executeQuery();
+
+        Vector<Cliente> clientes = new Vector<Cliente>();
+
+        if(result == null || !result.next())
+        {
+            this.connection.close();
+            throw  new MinhaException(" Não existem clientes cadastrados !");
+        }
+        else
+        {
+            do{
+                Cliente cliente = new Cliente();
+
+                cliente.setCodCliente(result.getInt("cod_cliente"));
+
+                clientes.add(cliente);
+
+            }while(result.next());
+
+        }
+
+        this.connection.close();
+
         return clientes;
     }
 

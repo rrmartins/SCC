@@ -2,6 +2,7 @@ package dao;
 
 import domain.Pagamento;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,13 +28,15 @@ public class PagamentoJDBCDao implements PagamentoDao {
 
         try {
             this.connection.setAutoCommit(false);
-            sql = "insert into pagamento (cod_locacao, cod_entrega, quantidade_vezes, valor_total) " +
-                    "values (?,?,?,?);";
+            sql = "insert into pagamento (cod_locacao, cod_entrega, quantidade_vezes, valor_total,data_emissao, data_vencimento) " +
+                    "values (?,?,?,?,?,?);";
             PreparedStatement pstmt = this.connection.prepareStatement(sql);
             pstmt.setInt(1, pagamento.getEntrega().getCodLocacao().getCodLocacao());
             pstmt.setInt(2, pagamento.getEntrega().getCodEntrega());
             pstmt.setInt(3, pagamento.getQuantidadeVezes());
             pstmt.setDouble(4, pagamento.getValorTotal());
+            pstmt.setDate(5, (Date) pagamento.getDataEmissao());
+            pstmt.setDate(6, (Date) pagamento.getDataVencimento());
 
             pstmt.executeUpdate();
             this.connection.commit();

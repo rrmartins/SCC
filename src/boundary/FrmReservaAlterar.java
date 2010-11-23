@@ -32,7 +32,7 @@ import util.MinhaException;
 public class FrmReservaAlterar extends javax.swing.JDialog {
 
     ControladoraReserva controlReserva;
-    Vector NomeGC, gC = new Vector();
+    Vector NomeGC, vetCliente ,gC = new Vector();
     DefaultComboBoxModel grupoCar = new DefaultComboBoxModel();
     int codTipoCarro, codGrupoCarro, codCliente;
     private static Vector usuario = new Vector();
@@ -57,28 +57,22 @@ public class FrmReservaAlterar extends javax.swing.JDialog {
         }
         jCBGrupoCarro.setModel(grupoCar);
 
-        String nomeGrupo;
-
-        if (linha.get(2).toString().equals("1")) {
-            nomeGrupo = (String) NomeGC.elementAt(Integer.parseInt(linha.get(2).toString())-1);
-        }
-        else {
-            nomeGrupo = (String) NomeGC.elementAt(Integer.parseInt(linha.get(2).toString()));
-        }
-        
+        vetCliente = controladoraReserva.obterCodCliente(linha.get(2).toString());
+        codCliente = Integer.parseInt(vetCliente.get(0).toString());
+        String nomeGrupo = linha.get(1).toString();
 
         if (this.linha.get(2) != null) {
             jCBGrupoCarro.setSelectedItem(nomeGrupo);
         }
-        this.jDCDataEntrega.setDate((Date) linha.get(5));
-        this.jDCDataRetirada.setDate((Date) linha.get(4));
-        this.jCBHoraRetirada.setSelectedItem(linha.get(6));
-        this.jCBHoraEntrega.setSelectedItem(linha.get(7));
-        this.jTFValorPrevisto.setText(linha.get(8).toString());
-        if (linha.get(9).equals("Sim")) {
+        this.jDCDataEntrega.setDate((Date) linha.get(4));
+        this.jDCDataRetirada.setDate((Date) linha.get(3));
+        this.jCBHoraRetirada.setSelectedItem(linha.get(5));
+        this.jCBHoraEntrega.setSelectedItem(linha.get(6));
+        this.jTFValorPrevisto.setText(linha.get(7).toString());
+        if (linha.get(8).equals("Sim")) {
             this.jRBSim.setSelected(true);
         }
-        if (linha.get(9).equals("Não")) {
+        if (linha.get(8).equals("Não")) {
             this.jRBNao.setSelected(true);
         }
   
@@ -224,6 +218,11 @@ public class FrmReservaAlterar extends javax.swing.JDialog {
 
         bGCobertura.add(jRBSim);
         jRBSim.setText("Sim");
+        jRBSim.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jRBSimFocusLost(evt);
+            }
+        });
 
         bGCobertura.add(jRBNao);
         jRBNao.setSelected(true);
@@ -473,7 +472,7 @@ public class FrmReservaAlterar extends javax.swing.JDialog {
                         Vector reser = new Vector();
                         reser.addElement(gC.get(6));    //cod_grupo_carro          //0
                         reser.addElement(gC.get(5));    //cod_tipo_carro           //1
-                        reser.addElement(linha.get(3));    //cod_cliente           //2
+                        reser.addElement(codCliente);    //cod_cliente           //2
                         reser.addElement(dataRet);                                 //3
                         reser.addElement(this.jCBHoraRetirada.getSelectedItem().toString());  //4
                         reser.addElement(dataEntre);                               //5
@@ -515,8 +514,7 @@ public class FrmReservaAlterar extends javax.swing.JDialog {
     }//GEN-LAST:event_jBAlterarActionPerformed
 
     private void jTFKMPrevistaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTFKMPrevistaFocusLost
-        // TODO add your handling code here:
-        double resultFinal = 0;
+double resultFinal = 0;
         double resultKM = 0;
         String nome = (String) this.jCBGrupoCarro.getSelectedItem();
         try {
@@ -530,30 +528,42 @@ public class FrmReservaAlterar extends javax.swing.JDialog {
         }
 
         double diasSobrando = this.calcularDatas(this.jDCDataRetirada.getDate(),this.jDCDataEntrega.getDate());
+
+        if (diasSobrando == 0)
+            diasSobrando = 1;
+
         double precoDiario = Double.valueOf(gC.get(1).toString());
-        double resultDiario = diasSobrando * precoDiario;
+        double precoKM = Double.valueOf(gC.get(2).toString());
+        double kmPrevisto = Double.parseDouble(this.jTFKMPrevista.getText());
+
+        resultKM = kmPrevisto * precoKM;
 
         if (this.jCBPlano.getSelectedItem().equals("Diaria Quilometrada")){
-            double precoKM = Double.valueOf(gC.get(2).toString());
-            double kmPrevisto = Integer.parseInt(this.jTFKMPrevista.getText());
-            resultKM = kmPrevisto * precoKM;
-                if (this.jRBSim.isSelected()){
-                    double precoCobertura = Double.valueOf(gC.get(3).toString());
-                    resultFinal = precoCobertura + resultDiario + resultKM;
-                }else {
-                    resultFinal = resultDiario + resultKM;
-                }
+           double resultDiario = diasSobrando * precoKM;
+
+           resultFinal = resultDiario + resultKM;
+
         }else{
             if (this.jRBSim.isSelected()){
                 double precoCobertura = Double.valueOf(gC.get(3).toString());
-                resultFinal = precoCobertura + resultDiario + resultKM;
+                double resultDiario = diasSobrando * precoDiario;
+                resultFinal = precoCobertura + resultDiario;
             }else {
-                resultFinal = resultDiario + resultKM;
+                resultFinal = diasSobrando * resultKM;
             }
         }
 
         this.jTFValorPrevisto.setText(String.valueOf(resultFinal));
+
     }//GEN-LAST:event_jTFKMPrevistaFocusLost
+
+    private void jRBSimFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jRBSimFocusLost
+        // TODO add your handling code here:
+        double precoCobertura = Double.valueOf(gC.get(3).toString());
+        double valorPrevisto = Double.valueOf(this.jTFValorPrevisto.getText());
+        valorPrevisto = valorPrevisto + precoCobertura;
+        this.jTFValorPrevisto.setText(String.valueOf(valorPrevisto)); 
+    }//GEN-LAST:event_jRBSimFocusLost
 
     /**
      * @param args the command line arguments

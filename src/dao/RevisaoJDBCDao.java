@@ -117,7 +117,6 @@ public class RevisaoJDBCDao implements RevisaoDao {
 
     }
 
-
     public Revisao selecionarRevisao(Revisao revisao) throws MinhaException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -195,15 +194,10 @@ public class RevisaoJDBCDao implements RevisaoDao {
 
             pStmt.executeUpdate();
 
-            this.connection.commit();
-
         }
         catch (SQLException erro) {
             this.connection.rollback();
             throw new MinhaException(erro.getMessage());
-        }
-        finally{
-            this.connection.close();
         }
     }
 }

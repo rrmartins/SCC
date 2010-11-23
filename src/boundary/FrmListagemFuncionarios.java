@@ -25,7 +25,6 @@ public class FrmListagemFuncionarios extends javax.swing.JDialog {
     public FrmListagemFuncionarios() throws ConexaoException {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.cbOrdenacao.setModel(new DefaultComboBoxModel(this.preencherComboOrdenacao()));
         this.limparTabela();
         this.montarTabela();
     }
@@ -82,8 +81,6 @@ public class FrmListagemFuncionarios extends javax.swing.JDialog {
         bInserir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelaFuncionarios = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        cbOrdenacao = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("SCC - Funcionários");
@@ -167,26 +164,20 @@ public class FrmListagemFuncionarios extends javax.swing.JDialog {
         tabelaFuncionarios.getColumnModel().getColumn(11).setPreferredWidth(30);
         tabelaFuncionarios.getColumnModel().getColumn(11).setMaxWidth(30);
 
-        jLabel1.setText("Listar Por:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbOrdenacao, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 306, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 994, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(bInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(32, 32, 32)
                         .addComponent(bAlterar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29)
-                        .addComponent(bRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 994, Short.MAX_VALUE))
+                        .addComponent(bRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -196,12 +187,10 @@ public class FrmListagemFuncionarios extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bAlterar)
-                    .addComponent(bInserir)
-                    .addComponent(jLabel1)
-                    .addComponent(cbOrdenacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                    .addComponent(bInserir))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -217,7 +206,7 @@ public class FrmListagemFuncionarios extends javax.swing.JDialog {
             else{
                 this.controladoraFuncionario.setMarc(selecionada);
 
-                JDialog janela = new FrmAtualizaFuncionario(null,true,this.controladoraFuncionario);
+                JDialog janela = new FrmAtualizaFuncionario(this.controladoraFuncionario);
                 janela.setVisible(true);
                 this.limparTabela();
             try {
@@ -308,8 +297,6 @@ public class FrmListagemFuncionarios extends javax.swing.JDialog {
     private javax.swing.JButton bAlterar;
     private javax.swing.JButton bInserir;
     private javax.swing.JButton bRemover;
-    private javax.swing.JComboBox cbOrdenacao;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabelaFuncionarios;
     // End of variables declaration//GEN-END:variables

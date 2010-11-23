@@ -21,16 +21,16 @@ public class Validador {
     
     public String tiraPontosCPF(String cpf)
     {
-        String valor = //cpf.replaceAll("\\.", "").replaceAll("\\-", "");
-                cpf.substring(0, 3) + cpf.substring(4, 7) + cpf.substring(8, 11) + cpf.substring(12, 14);
+        String valor = cpf.replaceAll("\\.", "").replaceAll("\\-", "").replaceAll(" ", "");
+                //cpf.substring(0, 3) + cpf.substring(4, 7) + cpf.substring(8, 11) + cpf.substring(12, 14);
         
         return valor;
     }
 
     public String tiraPontosTelefone(String tel)
     {
-         String valor = //tel.replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\-", "");
-                tel.substring(1, 3) + tel.substring(4, 8) + tel.substring(9, 13);
+         String valor = tel.replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\-", "");
+                //tel.substring(1, 3) + tel.substring(4, 8) + tel.substring(9, 13);
 
         return valor;
 

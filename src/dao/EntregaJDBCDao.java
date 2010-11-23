@@ -1,7 +1,9 @@
 package dao;
 
+import control.ControladoraRevisao;
 import domain.Entrega;
 import domain.Locacao;
+import domain.Revisao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,7 +74,6 @@ public class EntregaJDBCDao implements EntregaDao {
                             "quilometragem_final = ?,"+
                             "data_entrega = ?,"+
                             "valor_total = ?,"+
-                            "quantidade_vezes = ?,"+
                             "hora_entrega = ? "+
                             "where cod_entrega = ?;" ;
 
@@ -88,9 +89,8 @@ public class EntregaJDBCDao implements EntregaDao {
             prepSt.setInt(2, entrega.getQuilometragemFinal());
             prepSt.setDate(3, dataE);
             prepSt.setFloat(4, entrega.getValorTotal());
-            prepSt.setInt(5, entrega.getQuantidadeVezes());
-            prepSt.setString(6, entrega.getHoraEntrega());
-            prepSt.setInt(7, entrega.getCodEntrega());
+            prepSt.setTime(5, entrega.getHoraEntrega());
+            prepSt.setInt(6, entrega.getCodEntrega());
 
             prepSt.executeUpdate();
             this.connection.commit();
@@ -108,12 +108,13 @@ public class EntregaJDBCDao implements EntregaDao {
     }
 
     public void inserirEntrega(Entrega entrega) throws SQLException, MinhaException, ConexaoException {
+        
         this.connection = FabricaConexao.obterConexao();
 
         try {
             this.connection.setAutoCommit(false);
-            sql = "INSERT INTO entrega (cod_locacao,quilometragem_final,data_entrega,hora_entrega,valor_total,quantidade_vezes) " +
-                    "values (?,?,?,?,?,?);";
+            sql = "INSERT INTO entrega (cod_locacao,quilometragem_final,data_entrega,hora_entrega,valor_total) " +
+                    "values (?,?,?,?,?);";
             PreparedStatement pstmt = this.connection.prepareStatement(sql);
 
             java.sql.Date dt = new java.sql.Date (entrega.getDataEntrega().getTime());
@@ -121,12 +122,13 @@ public class EntregaJDBCDao implements EntregaDao {
             pstmt.setInt(1, entrega.getCodLocacao().getCodLocacao());
             pstmt.setInt(2, entrega.getQuilometragemFinal());
             pstmt.setDate(3, dt);
-            pstmt.setString(4, entrega.getHoraEntrega());
+            pstmt.setTime(4, entrega.getHoraEntrega());
             pstmt.setInt(5, entrega.getValorTotal());
-            pstmt.setInt(6, entrega.getQuantidadeVezes());
 
             pstmt.executeUpdate();
+                        
             this.connection.commit();
+            
         } catch (SQLException erro) {
             this.connection.rollback();
             throw erro;
@@ -183,9 +185,8 @@ public class EntregaJDBCDao implements EntregaDao {
                 ent.setCodLocacao(loca);
                 ent.setQuilometragemFinal(result.getInt("quilometragem_final"));
                 ent.setDataEntrega(result.getDate("data_entrega"));
-                ent.setHoraEntrega(result.getString("hora_entrega"));
+                ent.setHoraEntrega(result.getTime("hora_entrega"));
                 ent.setValorTotal(result.getInt("valor_total"));
-                ent.setQuantidadeVezes(result.getInt("quantidade_vezes"));
 
                 entre.addElement(ent);
             }while(result.next());

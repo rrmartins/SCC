@@ -116,7 +116,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lNome" min="-2" max="-2" attributes="0"/>
-                              <Component id="tfNome" min="-2" pref="248" max="-2" attributes="1"/>
+                              <Component id="tfNomeModelo" min="-2" pref="248" max="-2" attributes="1"/>
                               <Component id="lNEntrega" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="tfNEntrega" alignment="0" min="-2" pref="85" max="-2" attributes="0"/>
                           </Group>
@@ -163,7 +163,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="tfChassi" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="tfNome" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="tfNomeModelo" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -206,7 +206,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lNEntrega">
           <Properties>
-            <Property name="text" type="java.lang.String" value="N&#xfa;mero da Loca&#xe7;&#xe3;o"/>
+            <Property name="text" type="java.lang.String" value="Numero da Entrega"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="tfNEntrega">
@@ -219,7 +219,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="lNome">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Cliente"/>
+            <Property name="text" type="java.lang.String" value="Modelo"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lPlaca">
@@ -232,7 +232,7 @@
             <Property name="text" type="java.lang.String" value="Chassi do Veiculo"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="tfNome">
+        <Component class="javax.swing.JTextField" name="tfNomeModelo">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
           </Properties>
@@ -345,7 +345,6 @@
         <Component class="javax.swing.JTextField" name="tfValorTotal">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -380,6 +379,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancelar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bCancelarActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
       </AuxValues>

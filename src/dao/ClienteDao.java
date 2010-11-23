@@ -36,5 +36,7 @@ public interface ClienteDao {
 
 
     public Vector<Cliente> selecionarTodosClientes() throws MinhaException, SQLException, ConexaoException;
+
+    public Vector<Cliente> obterCodCliente(String nomeCliente) throws MinhaException, ConexaoException, SQLException;
 }
 

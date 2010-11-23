@@ -5,6 +5,8 @@ package control;
 import dao.FabricaDao;
 import dao.RevisaoDao;
 import domain.Entrega;
+import domain.Funcionario;
+import domain.Oficina;
 import domain.Revisao;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -20,6 +22,16 @@ public class ControladoraRevisao {
     
     private Vector<Revisao> vetRevisoes = new Vector<Revisao>();
     private int marc;
+    private Vector novaRevisao;
+
+    public Vector getNovaRevisao() {
+        return novaRevisao;
+    }
+
+    public void setNovaRevisao(Vector novaRevisao) {
+        this.novaRevisao = novaRevisao;
+    }
+
     
     public int getMarc() {
         return marc;
@@ -61,25 +73,29 @@ public class ControladoraRevisao {
         return revisao;
     }
 
-    public Revisao novaRevisao(Vector revisao) throws ParseException{
+    public Revisao novaRevisao(Vector revisao, ControladoraFuncionario cf, ControladoraOficina co) throws ParseException{
 
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
 
         Revisao nova = new Revisao();
-        Entrega entrega = new Entrega();
 
-
-        nova.setDescRevisao(null);
-        nova.setValorRevisao(Double.NaN);
+        nova.setDescRevisao(revisao.get(1).toString());
+        
+        String valorTotal = revisao.get(2).toString();
+        valorTotal = valorTotal.replace(",", ".");
+        
+        nova.setValorRevisao(Double.parseDouble(valorTotal));
 
         java.sql.Date dataE = new java.sql.Date(formatoData.parse(revisao.get(5).toString()).getTime());
         java.sql.Date dataS = new java.sql.Date(formatoData.parse(revisao.get(6).toString()).getTime());
 
         nova.setDataEntrada(dataE);
         nova.setDataSaida(dataS);
-        nova.setEntrega(entrega);
-        nova.setFuncionario(null);
-        nova.setOficina(null);
+        
+        if(revisao.get(5).toString().equals("mecanico"))
+            nova.setFuncionario(cf.getVetFuncionarios().get(cf.getMarc()));
+        else
+            nova.setOficina(co.getVetOficina().get(co.getMarc()));
 
         return nova;
     }
@@ -87,18 +103,18 @@ public class ControladoraRevisao {
     public void alterarRevisao (Vector revisao) throws MinhaException, SQLException, ParseException, ConexaoException {
 
         RevisaoDao revisaoDao = FabricaDao.getRevisaoDao("JDBC");
-        Revisao atualizada = this.novaRevisao(revisao);
+        //Revisao atualizada = this.novaRevisao(revisao);
 
-        revisaoDao.alterarRevisao(atualizada);
+        //revisaoDao.alterarRevisao(atualizada);
 
     }
 
     public void inserirRevisao (Vector revisao) throws MinhaException, SQLException, ParseException {
 
         RevisaoDao revisaoDao = FabricaDao.getRevisaoDao("JDBC");
-        Revisao nova = this.novaRevisao(revisao);
+        //Revisao nova = this.novaRevisao(revisao);
 
-        revisaoDao.inserirRevisao(nova, null);
+        //revisaoDao.inserirRevisao(nova, null);
 
 
     }

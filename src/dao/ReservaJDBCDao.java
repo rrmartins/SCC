@@ -168,70 +168,7 @@ public class ReservaJDBCDao implements ReservaDao {
             this.connection.close();
         }
     }
-
-    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(Date dataL, Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException, ParseException {
-
-        this.connection = FabricaConexao.obterConexao();
-
-        Reserva reserva = new Reserva();
-        Cliente cliente = new Cliente();
-
-        this.sql = "SELECT * FROM reserva " +
-                "WHERE cod_grupo_carro = ? AND " +
-                "data_locacao BETWEEN ? AND ? ;";
-
-        PreparedStatement pStmt = this.connection.prepareStatement(this.sql);
-        pStmt.setInt(1, grupoCarro.getCodGrupoCarro());
-        pStmt.setDate(2,(java.sql.Date) dataL);
-        pStmt.setDate(3,(java.sql.Date) dataE);
-
-        ResultSet result = pStmt.executeQuery();
-
-        Vector<Reserva> reservas = new Vector<Reserva>();
-        
-        SimpleDateFormat formatador = new SimpleDateFormat("HH:mm");
-        Time horaLoca = (Time) formatador.formatToCharacterIterator(reserva.getHoraLocacao());
-        Time horaEntre = (Time) formatador.formatToCharacterIterator(reserva.getHoraEntrega());
-
-
-        if(result == null || !result.next()){
-            this.connection.close();
-            return reservas;
-        }
-
-        else
-        {
-
-            do
-            {
-                 
-                cliente.setCodCliente(result.getInt("cod_cliente"));
-
-                reserva.setCodReserva(result.getInt("cod_reserva"));
-                reserva.setGrupoCarro(grupoCarro);
-                reserva.setCliente(cliente);
-                reserva.setDataLocacao(result.getDate("data_locacao"));
-                reserva.setDataEntrega(result.getDate("data_entrega"));
-                reserva.setHoraLocacao(horaLoca);
-                reserva.setHoraEntrega(horaEntre);
-                reserva.setValorPrevisto(result.getFloat("valor_previsto"));
-                reserva.setCobertura(result.getBoolean("situacao"));
-
-                reservas.addElement(reserva);
-
-
-            }while(result.next());
-
-        }
-
-        this.connection.close();
-
-        return reservas;
-    }
-
-    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(java.util.Date dataL, java.util.Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    
 
     @SuppressWarnings("unchecked")
     public Vector<Reserva> obterReservas(String texto) throws SQLException,ConexaoException, ClassNotFoundException, MinhaException {
@@ -270,9 +207,15 @@ public class ReservaJDBCDao implements ReservaDao {
         {
             String Sql;
 
-            Sql = "SELECT * " +
-                "FROM reserva "+
-                "order by " + texto + ";";
+            Sql = "SELECT re.*,"+
+                         "cl.nome, "+
+                         "gc.nome_grupo_carro " +
+                    "FROM reserva re, "+
+                         "cliente cl, "+
+                         "grupo_carro gc "+
+                    "WHERE re.cod_cliente = cl.cod_cliente and "+
+                          "re.cod_grupo_carro = gc.cod_grupo_carro "+
+                    "order by " + texto + ";";
 
 
             this.connection.setAutoCommit(false);
@@ -285,9 +228,11 @@ public class ReservaJDBCDao implements ReservaDao {
             do
             {
                 GrupoCarro gc = new GrupoCarro();
+                gc.setNomeGrupo(result.getString("nome_grupo_carro"));
                 gc.setCodGrupoCarro(result.getInt("cod_grupo_carro"));
-                
+
                 Cliente clie = new Cliente();
+                clie.setNome(result.getString("nome"));
                 clie.setCodCliente(result.getInt("cod_cliente"));
 
                 Reserva res = new Reserva();
@@ -346,6 +291,59 @@ public class ReservaJDBCDao implements ReservaDao {
         {
             this.connection.close();
         }
+    }
+
+    public Vector<Reserva> selecionarReservasPorIntervaloDeDatas(java.util.Date dataL, java.util.Date dataE, GrupoCarro grupoCarro) throws MinhaException, SQLException, ConexaoException, ParseException {
+        this.connection = FabricaConexao.obterConexao();
+
+        Reserva reserva = new Reserva();
+        Cliente cliente = new Cliente();
+
+        this.sql = "SELECT * FROM reserva " +
+                "WHERE cod_grupo_carro = ? AND " +
+                "data_locacao BETWEEN ? AND ? ;";
+
+        PreparedStatement pStmt = this.connection.prepareStatement(this.sql);
+        pStmt.setInt(1, grupoCarro.getCodGrupoCarro());
+        pStmt.setDate(2,(java.sql.Date) dataL);
+        pStmt.setDate(3,(java.sql.Date) dataE);
+
+        ResultSet result = pStmt.executeQuery();
+
+        Vector<Reserva> reservas = new Vector<Reserva>();
+
+
+        if(result == null || !result.next()){
+            this.connection.close();
+            return reservas;
+        }
+
+        else
+        {
+
+            do
+            {
+
+                cliente.setCodCliente(result.getInt("cod_cliente"));
+
+                reserva.setCodReserva(result.getInt("cod_reserva"));
+                reserva.setGrupoCarro(grupoCarro);
+                reserva.setCliente(cliente);
+                reserva.setDataLocacao(result.getDate("data_locacao"));
+                reserva.setDataEntrega(result.getDate("data_entrega"));
+                reserva.setValorPrevisto(result.getFloat("valor_previsto"));
+                reserva.setCobertura(result.getBoolean("situacao"));
+
+                reservas.addElement(reserva);
+
+
+            }while(result.next());
+
+        }
+
+        this.connection.close();
+
+        return reservas;
     }
 
 }

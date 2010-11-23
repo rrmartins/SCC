@@ -83,8 +83,21 @@ public class ControladoraCarros {
         return linha;
     }
 
+    public Vector montarCarroTela(Carro carro){
 
-    public void alterarCarro (Vector carro, ControladoraGrupoCarro controladoraGrupoCarro) throws ConexaoException, MinhaException, SQLException{
+        Vector linha = new Vector();
+        linha.addElement(carro.getCodCarro());
+        linha.addElement(carro.getModelo());
+        linha.addElement(carro.getPlaca());
+        linha.addElement(carro.getChassi());
+        linha.addElement(carro.getQuilometragem());
+
+        return linha;
+
+    }
+
+
+    public void alterarCarro (Vector carro, ControladoraGrupoCarro controladoraGrupoCarro) throws MinhaException, SQLException, ConexaoException{
 
         Carro car = this.carros.get(marc);
         this.criaObjetoCarro(car, carro, controladoraGrupoCarro);
@@ -94,7 +107,7 @@ public class ControladoraCarros {
     }
 
 
-    public void inserirCarro (Vector carro, ControladoraGrupoCarro controladoraGrupoCarro) throws MinhaException, ConexaoException, SQLException{
+    public void inserirCarro (Vector carro, ControladoraGrupoCarro controladoraGrupoCarro) throws MinhaException, SQLException, ConexaoException{
 
         Carro car = new Carro();
         this.criaObjetoCarro(car, carro, controladoraGrupoCarro);
@@ -151,7 +164,7 @@ public class ControladoraCarros {
         for(int i = 0; i < vetCarros.size(); i++){
 
             Carro car = vetCarros.get(i);
-            linhasCarro.addElement(this.montarLinhasCarro(car));
+            linhasCarro.addElement(this.montarCarroTela(car));
         }
 
         return linhasCarro;

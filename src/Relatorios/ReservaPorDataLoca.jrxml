@@ -21,7 +21,7 @@
 		<![CDATA[SELECT
      re.*,
      cl."nome",
-     re."concluida" AS re_concluida
+     re."situacao" AS re_concluida
 FROM
      "reserva" re INNER JOIN "cliente" cl ON re."cod_cliente" = cl."cod_cliente"
 WHERE
@@ -30,7 +30,6 @@ ORDER BY
      data_locacao ASC;]]>
 	</queryString>
 	<field name="cod_reserva" class="java.lang.Integer"/>
-	<field name="cod_tipo_carro" class="java.lang.Integer"/>
 	<field name="cod_grupo_carro" class="java.lang.Integer"/>
 	<field name="cod_cliente" class="java.lang.Integer"/>
 	<field name="data_locacao" class="java.sql.Date"/>
@@ -39,7 +38,7 @@ ORDER BY
 	<field name="hora_entrega" class="java.sql.Time"/>
 	<field name="valor_previsto" class="java.math.BigDecimal"/>
 	<field name="cobertura" class="java.lang.Boolean"/>
-	<field name="concluida" class="java.lang.Boolean"/>
+	<field name="situacao" class="java.lang.Boolean"/>
 	<field name="nome" class="java.lang.String"/>
 	<field name="re_concluida" class="java.lang.Boolean"/>
 	<group name="data_locacao">
@@ -142,7 +141,7 @@ ORDER BY
 				<textField isStretchWithOverflow="true">
 					<reportElement style="Detail" x="569" y="0" width="228" height="15"/>
 					<textElement/>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{concluida} == true ? "Concluido" : "Pendente"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{situacao} == true ? "Concluido" : "Pendente"]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>

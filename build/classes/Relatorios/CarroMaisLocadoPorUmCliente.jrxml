@@ -29,8 +29,7 @@
      ca."modelo",
      lo."quilometragem_prevista"
 FROM
-     "carro" ca INNER JOIN "grupo_carro" gc ON ca."cod_grupo_carro" = gc."cod_grupo_carro"
-     INNER JOIN "locacao" lo ON gc."cod_grupo_carro" = lo."cod_grupo_carro"
+     "carro" ca INNER JOIN "locacao" lo ON ca."cod_carro" = lo."cod_carro"
      INNER JOIN "cliente" cl ON lo."cod_cliente" = cl."cod_cliente"
 WHERE
      lo.data_locacao BETWEEN $P{data_inicio} AND $P{data_fim};]]>

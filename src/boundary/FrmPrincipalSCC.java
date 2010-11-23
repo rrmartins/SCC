@@ -64,10 +64,12 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         if (userTipo.get(0).equals("Cliente"))
         {
             this.jLNomeUsuario.setText(usuario.get(6).toString());
-            this.jMCadastroAcessorio.setEnabled(false);
-            this.jMCadastroCliente.setEnabled(false);
-            this.jMCadastroGrupoCarro.setEnabled(false);
-            this.jMCadastroTipoCarro.setEnabled(false);
+            this.jMLocacao.setVisible(false);
+            this.jMRF.setVisible(false);
+            this.jMRelatorio.setVisible(false);
+            this.jMRevisao.setVisible(false);
+            this.jMEntrega.setVisible(false);
+            this.jMIListagemReserva.setVisible(false);
         } else if (admin.get(1).equals("admin"))
         {
             this.jLTipo.setText("Administrator");
@@ -90,10 +92,11 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         jLTipo = new javax.swing.JLabel();
         jLNomeUsuario = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenuSCC = new javax.swing.JMenuBar();
         jMLocacao = new javax.swing.JMenu();
         jMIInserirLocacao = new javax.swing.JMenuItem();
-        jMrevisao = new javax.swing.JMenu();
+        MIListagemLocacao = new javax.swing.JMenuItem();
+        jMRevisao = new javax.swing.JMenu();
         jMIInserirRevisao = new javax.swing.JMenuItem();
         jMIListagemRevisao = new javax.swing.JMenuItem();
         jMReserva = new javax.swing.JMenu();
@@ -126,14 +129,18 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         jMIListagemCliente = new javax.swing.JMenuItem();
         jMCadastroGrupoCarro = new javax.swing.JMenu();
         jMIInserirGC = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMIListagemGrupoCarro = new javax.swing.JMenuItem();
         jMCadastroCarro = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        jMIInserirCarro = new javax.swing.JMenuItem();
+        jMIListagemCarro = new javax.swing.JMenuItem();
+        jMRelatorio = new javax.swing.JMenu();
         jMICarroMaisLocado = new javax.swing.JMenuItem();
         jMIRelatorioCarroMaisLocadoPorUmCliente = new javax.swing.JMenuItem();
         jMIGCMaisLocado = new javax.swing.JMenuItem();
         jMILocacaoPorCliente = new javax.swing.JMenuItem();
         jMIReservaPorData = new javax.swing.JMenuItem();
+        jMIRelatorioPagamento = new javax.swing.JMenuItem();
+        jMIRelatorioCarroAposData = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SCC - Sistema de Controle de Carro");
@@ -148,8 +155,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         jLTipo.setText("Tipo:");
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/carro.png"))); // NOI18N
-        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/LogoFactory.gif"))); // NOI18N
 
         jMLocacao.setText("Locação");
 
@@ -161,9 +167,17 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         });
         jMLocacao.add(jMIInserirLocacao);
 
-        jMenuBar1.add(jMLocacao);
+        MIListagemLocacao.setText("Listagem Locação");
+        MIListagemLocacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MIListagemLocacaoActionPerformed(evt);
+            }
+        });
+        jMLocacao.add(MIListagemLocacao);
 
-        jMrevisao.setText("Revisão");
+        jMenuSCC.add(jMLocacao);
+
+        jMRevisao.setText("Revisão");
 
         jMIInserirRevisao.setText("Inserir Revisão");
         jMIInserirRevisao.addActionListener(new java.awt.event.ActionListener() {
@@ -171,7 +185,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMIInserirRevisaoActionPerformed(evt);
             }
         });
-        jMrevisao.add(jMIInserirRevisao);
+        jMRevisao.add(jMIInserirRevisao);
 
         jMIListagemRevisao.setText("Listagem Revisão");
         jMIListagemRevisao.addActionListener(new java.awt.event.ActionListener() {
@@ -179,9 +193,9 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMIListagemRevisaoActionPerformed(evt);
             }
         });
-        jMrevisao.add(jMIListagemRevisao);
+        jMRevisao.add(jMIListagemRevisao);
 
-        jMenuBar1.add(jMrevisao);
+        jMenuSCC.add(jMRevisao);
 
         jMReserva.setText("Reserva");
 
@@ -201,7 +215,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         });
         jMReserva.add(jMIListagemReserva);
 
-        jMenuBar1.add(jMReserva);
+        jMenuSCC.add(jMReserva);
 
         jMEntrega.setText("Entrega");
 
@@ -221,7 +235,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         });
         jMEntrega.add(jMIListagemEntrega);
 
-        jMenuBar1.add(jMEntrega);
+        jMenuSCC.add(jMEntrega);
 
         jMRF.setText("Cadastros");
 
@@ -368,19 +382,46 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         jMCadastroGrupoCarro.setText("Cadastro Grupo de Carro");
 
         jMIInserirGC.setText("Inserir Grupo Carro");
+        jMIInserirGC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIInserirGCActionPerformed(evt);
+            }
+        });
         jMCadastroGrupoCarro.add(jMIInserirGC);
 
-        jMenuItem1.setText("Listagem Grupo Carro");
-        jMCadastroGrupoCarro.add(jMenuItem1);
+        jMIListagemGrupoCarro.setText("Listagem Grupo Carro");
+        jMIListagemGrupoCarro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIListagemGrupoCarroActionPerformed(evt);
+            }
+        });
+        jMCadastroGrupoCarro.add(jMIListagemGrupoCarro);
 
         jMRF.add(jMCadastroGrupoCarro);
 
         jMCadastroCarro.setText("Cadastro Carro");
+
+        jMIInserirCarro.setText("Inserir Carro");
+        jMIInserirCarro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIInserirCarroActionPerformed(evt);
+            }
+        });
+        jMCadastroCarro.add(jMIInserirCarro);
+
+        jMIListagemCarro.setText("Listagem Carro");
+        jMIListagemCarro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIListagemCarroActionPerformed(evt);
+            }
+        });
+        jMCadastroCarro.add(jMIListagemCarro);
+
         jMRF.add(jMCadastroCarro);
 
-        jMenuBar1.add(jMRF);
+        jMenuSCC.add(jMRF);
 
-        jMenu2.setText("Relatórios");
+        jMRelatorio.setText("Relatórios");
 
         jMICarroMaisLocado.setText("Carro Mais Locado");
         jMICarroMaisLocado.addActionListener(new java.awt.event.ActionListener() {
@@ -388,7 +429,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMICarroMaisLocadoActionPerformed(evt);
             }
         });
-        jMenu2.add(jMICarroMaisLocado);
+        jMRelatorio.add(jMICarroMaisLocado);
 
         jMIRelatorioCarroMaisLocadoPorUmCliente.setText("Carro mais Locado Por Um Cliente");
         jMIRelatorioCarroMaisLocadoPorUmCliente.addActionListener(new java.awt.event.ActionListener() {
@@ -396,7 +437,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMIRelatorioCarroMaisLocadoPorUmClienteActionPerformed(evt);
             }
         });
-        jMenu2.add(jMIRelatorioCarroMaisLocadoPorUmCliente);
+        jMRelatorio.add(jMIRelatorioCarroMaisLocadoPorUmCliente);
 
         jMIGCMaisLocado.setText("Grupo de carro mais Locado");
         jMIGCMaisLocado.addActionListener(new java.awt.event.ActionListener() {
@@ -404,7 +445,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMIGCMaisLocadoActionPerformed(evt);
             }
         });
-        jMenu2.add(jMIGCMaisLocado);
+        jMRelatorio.add(jMIGCMaisLocado);
 
         jMILocacaoPorCliente.setText("Locação Por Cliente");
         jMILocacaoPorCliente.addActionListener(new java.awt.event.ActionListener() {
@@ -412,7 +453,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMILocacaoPorClienteActionPerformed(evt);
             }
         });
-        jMenu2.add(jMILocacaoPorCliente);
+        jMRelatorio.add(jMILocacaoPorCliente);
 
         jMIReservaPorData.setText("Reserva por Data");
         jMIReservaPorData.addActionListener(new java.awt.event.ActionListener() {
@@ -420,37 +461,53 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
                 jMIReservaPorDataActionPerformed(evt);
             }
         });
-        jMenu2.add(jMIReservaPorData);
+        jMRelatorio.add(jMIReservaPorData);
 
-        jMenuBar1.add(jMenu2);
+        jMIRelatorioPagamento.setText("Pagamentos");
+        jMIRelatorioPagamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIRelatorioPagamentoActionPerformed(evt);
+            }
+        });
+        jMRelatorio.add(jMIRelatorioPagamento);
 
-        setJMenuBar(jMenuBar1);
+        jMIRelatorioCarroAposData.setText("Carro que passou da Data de Entrega");
+        jMIRelatorioCarroAposData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIRelatorioCarroAposDataActionPerformed(evt);
+            }
+        });
+        jMRelatorio.add(jMIRelatorioCarroAposData);
+
+        jMenuSCC.add(jMRelatorio);
+
+        setJMenuBar(jMenuSCC);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(887, Short.MAX_VALUE)
-                .addComponent(jBSair)
-                .addGap(65, 65, 65))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLTipo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLNomeUsuario)
-                .addContainerGap(959, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(348, 348, 348)
-                .addComponent(jLabel1)
-                .addContainerGap(381, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jBSair)
+                        .addGap(65, 65, 65))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLTipo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLNomeUsuario)
+                        .addContainerGap(959, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 983, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(108, 108, 108)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jBSair)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -654,7 +711,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
     private void jMIInserirClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIInserirClienteActionPerformed
         // TODO add your handling code here:
 
-        new FrmCadastroCliente(null,true).setVisible(true);
+        new FrmCadastroCliente().setVisible(true);
     }//GEN-LAST:event_jMIInserirClienteActionPerformed
 
     private void jMIListagemClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIListagemClienteActionPerformed
@@ -743,7 +800,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
 
     private void jMIInserirRevisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIInserirRevisaoActionPerformed
         // TODO add your handling code here:
-        new FrmRevisao().setVisible(true);
+        //new FrmRevisao().setVisible(true);
     }//GEN-LAST:event_jMIInserirRevisaoActionPerformed
 
     private void jMIListagemRevisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIListagemRevisaoActionPerformed
@@ -764,19 +821,98 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMIInserirLocacaoActionPerformed
 
-    /**
-    * @param args the command line arguments
-    
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrmPrincipalSCC(usuario).setVisible(true);
-                
-            }
-        });
-    }*/
+    private void jMIRelatorioPagamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIRelatorioPagamentoActionPerformed
+        // TODO add your handling code here:
 
+        String nomeRelatorio = "RelatorioPagamento";
+        try {
+            controlRelatorio.relatorio(nomeRelatorio, usuario);
+        } catch (MinhaException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ConexaoException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMIRelatorioPagamentoActionPerformed
+
+    private void jMIRelatorioCarroAposDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIRelatorioCarroAposDataActionPerformed
+        // TODO add your handling code here:
+        String param_inicial = JOptionPane.showInputDialog(null, "Digite a Data inicial {no formato-> dd/mm/aaaa}", "Passagem de Prametro", JOptionPane.INFORMATION_MESSAGE);
+        String param_final = JOptionPane.showInputDialog(null, "Digite a Data Final {no formato-> dd/mm/aaaa}", "Passagem de Prametro", JOptionPane.INFORMATION_MESSAGE);
+        String nomeRelatorio = "CarroQuePassouDODiaDEEntrega";
+
+        if (!param_inicial.equals(null)){
+            if (!param_final.equals(null)){
+                try {
+                    try {
+                        try {
+                            controlRelatorio.relatorio(nomeRelatorio, param_inicial, param_final, usuario);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } catch (SQLException ex) {
+                        Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ConexaoException ex) {
+                        Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } catch (MinhaException ex) {
+                    Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_jMIRelatorioCarroAposDataActionPerformed
+
+    private void jMIInserirGCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIInserirGCActionPerformed
+        try {
+            // TODO add your handling code here:
+            new FrmCadastroGrupoCarro().setVisible(true);
+        } catch (ConexaoException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMIInserirGCActionPerformed
+
+    private void jMIListagemGrupoCarroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIListagemGrupoCarroActionPerformed
+        try {
+            // TODO add your handling code here:
+            new FrmListagemGrupoCarro().setVisible(true);
+        } catch (ConexaoException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMIListagemGrupoCarroActionPerformed
+
+    private void jMIInserirCarroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIInserirCarroActionPerformed
+        try {
+            // TODO add your handling code here:
+            new FrmCadastroCarro().setVisible(true);
+        } catch (ConexaoException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMIInserirCarroActionPerformed
+
+    private void jMIListagemCarroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIListagemCarroActionPerformed
+        try {
+            // TODO add your handling code here:
+            new FrmListagemCarros().setVisible(true);
+        } catch (ConexaoException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMIListagemCarroActionPerformed
+
+    private void MIListagemLocacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MIListagemLocacaoActionPerformed
+        try {
+            // TODO add your handling code here:
+            new FrmListagemLocacao().setVisible(true);
+        } catch (ConexaoException ex) {
+            Logger.getLogger(FrmPrincipalSCC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_MIListagemLocacaoActionPerformed
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MIListagemLocacao;
     private javax.swing.JButton jBSair;
     private javax.swing.JLabel jLNomeUsuario;
     private javax.swing.JLabel jLTipo;
@@ -794,6 +930,7 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMICarroMaisLocado;
     private javax.swing.JMenuItem jMIGCMaisLocado;
     private javax.swing.JMenuItem jMIInserirAcessorio;
+    private javax.swing.JMenuItem jMIInserirCarro;
     private javax.swing.JMenuItem jMIInserirCidade;
     private javax.swing.JMenuItem jMIInserirCliente;
     private javax.swing.JMenuItem jMIInserirEntrega;
@@ -805,26 +942,29 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMIInserirTipoCarro;
     private javax.swing.JMenuItem jMIInserirUF;
     private javax.swing.JMenuItem jMIListagemAcessorio;
+    private javax.swing.JMenuItem jMIListagemCarro;
     private javax.swing.JMenuItem jMIListagemCidade;
     private javax.swing.JMenuItem jMIListagemCliente;
     private javax.swing.JMenuItem jMIListagemEntrega;
     private javax.swing.JMenuItem jMIListagemFuncionario;
+    private javax.swing.JMenuItem jMIListagemGrupoCarro;
     private javax.swing.JMenuItem jMIListagemOficina;
     private javax.swing.JMenuItem jMIListagemReserva;
     private javax.swing.JMenuItem jMIListagemRevisao;
     private javax.swing.JMenuItem jMIListagemTipoCarro;
     private javax.swing.JMenuItem jMIListagemUF;
     private javax.swing.JMenuItem jMILocacaoPorCliente;
+    private javax.swing.JMenuItem jMIRelatorioCarroAposData;
     private javax.swing.JMenuItem jMIRelatorioCarroMaisLocadoPorUmCliente;
+    private javax.swing.JMenuItem jMIRelatorioPagamento;
     private javax.swing.JMenuItem jMIReserva;
     private javax.swing.JMenuItem jMIReservaPorData;
     private javax.swing.JMenu jMLocacao;
     private javax.swing.JMenu jMRF;
+    private javax.swing.JMenu jMRelatorio;
     private javax.swing.JMenu jMReserva;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenu jMrevisao;
+    private javax.swing.JMenu jMRevisao;
+    private javax.swing.JMenuBar jMenuSCC;
     // End of variables declaration//GEN-END:variables
 
 }

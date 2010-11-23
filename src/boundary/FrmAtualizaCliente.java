@@ -6,8 +6,7 @@ import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import util.ConexaoException;
 import util.MinhaException;
 
@@ -20,8 +19,8 @@ public class FrmAtualizaCliente extends FrmCadastroCliente{
 
     private ControladoraCliente controladora;
     
-    public FrmAtualizaCliente(java.awt.Frame parent, boolean modal, ControladoraCliente controladoraCliente){
-        super(parent,modal);
+    public FrmAtualizaCliente(ControladoraCliente controladoraCliente){
+        this.setModal(true);
         this.controladora = controladoraCliente;
         this.preencherCampos();
         
@@ -61,15 +60,18 @@ public class FrmAtualizaCliente extends FrmCadastroCliente{
                 }
                 catch (ParseException erro)
                 {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
                 catch (SQLException erro)
                 {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
                 catch (MinhaException erro)
                 {
+                    JOptionPane.showMessageDialog(null, erro.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
                 catch (ConexaoException ex) {
-                   Logger.getLogger(FrmAtualizaCliente.class.getName()).log(Level.SEVERE, null, ex);
+                   JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 }
                 finally
                 {
@@ -78,7 +80,7 @@ public class FrmAtualizaCliente extends FrmCadastroCliente{
             }
         }
         else if(e.getSource() == this.bCancelar)
-            this.preencherCampos();
+            this.dispose();
         
     }
 

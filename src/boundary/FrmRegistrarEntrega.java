@@ -16,6 +16,7 @@ import control.ControladoraPagamento;
 import control.ControladoraRelatorio;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,8 +44,9 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
     Vector usuarioTipo = new Vector();
     Vector usuario = new Vector();
     Double valorTotal;
-    FrmRevisao frmRevisao;
-    String cpf;
+    String cpf, nomePlano;
+    DecimalFormat formato = new DecimalFormat("#.00");
+    String vFormat;
     
     /** Creates new form FrmRegistrarEntrega */
     public FrmRegistrarEntrega(Vector userTipo, Vector user) {
@@ -166,10 +168,6 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
         jTFCorbertura = new javax.swing.JTextField();
         jLValorTotal = new javax.swing.JLabel();
         jLRS2 = new javax.swing.JLabel();
-        jLValorRevisao = new javax.swing.JLabel();
-        jTFValorRevisao = new javax.swing.JTextField();
-        jLRS3 = new javax.swing.JLabel();
-        jBInserirRevisao = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
         jFTFCPF = new javax.swing.JFormattedTextField();
         jTFGC = new javax.swing.JTextField();
@@ -220,6 +218,11 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
         });
 
         jBCancelar.setText("Cancelar");
+        jBCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBCancelarActionPerformed(evt);
+            }
+        });
 
         jLKM.setText("Km");
 
@@ -263,20 +266,6 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
 
         jLRS2.setText("R$");
 
-        jLValorRevisao.setText("Valor Revisao");
-
-        jTFValorRevisao.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTFValorRevisao.setEnabled(false);
-
-        jLRS3.setText("R$");
-
-        jBInserirRevisao.setText("Inserir Revisao");
-        jBInserirRevisao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBInserirRevisaoActionPerformed(evt);
-            }
-        });
-
         try {
             jFTFCPF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###.###.###-##")));
         } catch (java.text.ParseException ex) {
@@ -315,20 +304,11 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jCBHoraEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLPagRealizado, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLValorRevisao)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLRS3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTFValorRevisao, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLPagRealizado)
+                                .addGap(96, 96, 96)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(17, 17, 17)
-                                        .addComponent(jBInserirRevisao)
-                                        .addGap(18, 18, 18)
+                                        .addGap(140, 140, 140)
                                         .addComponent(jLValorTotal)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLRS2)
@@ -471,14 +451,10 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLValorRevisao)
-                    .addComponent(jLRS3)
-                    .addComponent(jTFValorRevisao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBInserirRevisao)
                     .addComponent(jLRS2)
                     .addComponent(jLValorTotal)
                     .addComponent(jTFValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBConfirmar)
                     .addComponent(jBCancelar))
@@ -494,7 +470,7 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
         Validador valida = new Validador();
         cpf = valida.tiraPontosCPF(cpf);
 
-        if (!this.jTCPF.getText().isEmpty())
+        if (!cpf.isEmpty())
         {
 
             try{
@@ -503,9 +479,11 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
                     this.jTFCliente.setText(cliente.get(1).toString());
 
                     Vector carro = this.controlEntrega.obterCarro(cpf);
-                    codLocacao = Integer.parseInt(carro.get(10).toString());
-                    codCarro = Integer.parseInt(carro.get(11).toString());
-                    
+
+                    codLocacao = Integer.parseInt(carro.get(11).toString());
+                    codCarro = Integer.parseInt(carro.get(10).toString());
+                    nomePlano = carro.get(12).toString();
+
                     this.jTFPlacaVeiculo.setText(carro.get(0).toString());
                     this.jTFGC.setText(carro.get(1).toString());
                     this.jTFCarro.setText(carro.get(2).toString());
@@ -517,8 +495,8 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
                     }else{
                         this.jTFCorbertura.setText("Não");
                     }
-                    
-                    this.jTFValorPrevisto.setText(carro.get(5).toString());
+                    String valorPrevisto = formato.format(Double.parseDouble(carro.get(5).toString()));
+                    this.jTFValorPrevisto.setText(valorPrevisto);
 
                     Date data = new Date();
 
@@ -559,12 +537,14 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
                     {
                         if ((!this.jRBNao.isSelected()) || (!this.jRBSim.isSelected()))
                         {
+                            int vTotal = (int) Double.parseDouble(this.jTFValorTotal.getText().replace(",", ""));
+                            
                             Vector novaEntrega = new Vector();
                             novaEntrega.addElement(codLocacao);                              //0
                             novaEntrega.addElement(this.jTFKMFinal.getText());
                             novaEntrega.addElement(this.jDCDataEntrega.getDate());
                             novaEntrega.addElement(this.jCBHoraEntrega.getSelectedItem());
-                            novaEntrega.addElement(this.jTFValorTotal.getText());
+                            novaEntrega.addElement(vTotal / 100);
                             novaEntrega.addElement(this.jTFQntVezes.getText());
                             novaEntrega.addElement(codCarro);
 
@@ -586,7 +566,6 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
                                 this.jCBHoraEntrega.setSelectedItem("HR");
                                 this.jTFCorbertura.setText("");
                                 this.jTFValorPrevisto.setText("");
-                                this.jTFValorRevisao.setText("");
                                 this.jTFValorTotal.setText("");
                                 this.jTFQntVezes.setText("");
 
@@ -631,106 +610,9 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "É necessário o CPF do Cliente!","Atenção" , JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_jBConfirmarActionPerformed
 
-    private void jBInserirRevisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBInserirRevisaoActionPerformed
-        // TODO add your handling code here:
-        
-        this.frmRevisao = new FrmRevisao();
-        this.frmRevisao.setVisible(true);
-
-        this.valorTotal = this.frmRevisao.getValorTotal();
-        
-        int kmFinal, kmInicial, kmResult, valorRevisao;
-        Date dataLocacao = null;
-        Date dataEntrega = null;
-        Date dataAtual = new Date();
-        String cpf = this.jFTFCPF.getText();
-        Validador valida = new Validador();
-        cpf = valida.tiraPontosCPF(cpf);
-
-        valorRevisao = Integer.parseInt(this.jTFValorRevisao.getText());
-        try {
-            Vector carro = this.controlEntrega.obterCarro(cpf);
-
-            dataLocacao = (Date) carro.get(6);
-            dataEntrega = (Date) carro.get(7);
-            double valor = Double.parseDouble(carro.get(8).toString());
-            double valorLitroKM = Integer.parseInt(carro.get(9).toString());
-            int valorTotalFrm;
-            if (dataAtual.after(dataEntrega)) // se dataAtual for posterior a data de entrega
-            {
-                long milisecInicial = dataAtual.getTime();
-                long milisecFinal = dataEntrega.getTime();
-                long dif = milisecFinal - milisecInicial;
-
-                kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-                kmFinal   = Integer.parseInt(this.jTFKMFinal.getText());
-
-                kmResult = +(kmFinal - kmInicial);
-
-                kmResult = (int) (kmResult * valorLitroKM); // valor do desconto da KM
-
-                long result = (((dif / 1000) / 60) / 60) / 24;
-
-                result = (long) (result * valor); // resultado de dias sobrando
-
-                valorTotalFrm = (int) (result + kmResult + valorRevisao);
-
-                valorTotalFrm = (int) (valorTotalFrm + valorTotal);
-
-                this.jTFValorTotal.setText(String.valueOf(valorTotalFrm));
-
-            }
-            if (dataAtual.before(dataEntrega))  // se dataAtual é anterior a dataEntrega
-            {
-                long milisecInicial = dataAtual.getTime();
-                long milisecFinal = dataEntrega.getTime();
-                long dif = milisecFinal - milisecInicial;
-
-                kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-                kmFinal   = Integer.parseInt(this.jTFKMFinal.getText());
-
-                kmResult = +(kmFinal - kmInicial);
-
-                kmResult = (int) (kmResult * valorLitroKM); // valor do desconto da KM
-
-                long result = (((dif / 1000) / 60) / 60) / 24;
-
-                result = (long) (result * valor); // resultado de dias sobrando
-
-                valorTotalFrm = (int) (result - kmResult + valorRevisao);
-
-                valorTotalFrm = (int) (valorTotalFrm + valorTotal);
-
-                this.jTFValorTotal.setText(String.valueOf(valorTotalFrm));
-            }
-            if (dataAtual.equals(dataEntrega)){
-
-                kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-                kmFinal   = Integer.parseInt(this.jTFKMFinal.getText());
-
-                kmResult = +(kmFinal - kmInicial);
-
-                kmResult = (int) ((kmResult * valorLitroKM) + valorRevisao); // valor do desconto da KM
-
-                valorTotalFrm = (int) (kmResult + valorTotal);
-
-                this.jTFValorTotal.setText(String.valueOf(valorTotalFrm));
-
-            }
-
-        } catch (ConexaoException ex) {
-            Logger.getLogger(FrmRegistrarEntrega.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(FrmRegistrarEntrega.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MinhaException ex) {
-            Logger.getLogger(FrmRegistrarEntrega.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-    }//GEN-LAST:event_jBInserirRevisaoActionPerformed
-
     private void jCBHoraEntregaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jCBHoraEntregaFocusLost
         // TODO add your handling code here:
+        
         double kmFinal, kmInicial, kmResult;
         Date dataEntrega = null;
         Date dataAtual = new Date();
@@ -743,8 +625,10 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
             double diasSobrando = this.calcularDatas(carro);
             dataEntrega = (Date) carro.get(7);
             double valorDiario = Double.parseDouble(carro.get(8).toString());
-            double valorLitroKM = Integer.parseInt(carro.get(9).toString());
-            int valorTotal;
+            double valorDiarioQuilometrado = Double.parseDouble(carro.get(13).toString());
+            double valorLitroKM = Double.parseDouble(carro.get(9).toString());
+            double valorCobertura = Double.parseDouble(carro.get(14).toString());
+            double valorTotal;
             if (dataAtual.after(dataEntrega)) // se dataAtual for posterior a data de entrega
             {
                 kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
@@ -756,11 +640,33 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
 
                 double result;
 
-                result = (diasSobrando * valorDiario); // resultado de dias sobrando
+                if (nomePlano.equals("Diaria Quilometrada")){
 
-                valorTotal = (int) (result + kmResult);
-                
-                this.jTFValorTotal.setText(String.valueOf(valorTotal));
+                    if (this.jTFCorbertura.getText().equals("Sim")){
+                        result = diasSobrando * valorDiarioQuilometrado;
+                        valorTotal = result + kmResult + valorCobertura ;
+                    }else{
+                        result = diasSobrando * valorDiarioQuilometrado;
+                        valorTotal = result + kmResult;
+                    }
+                    
+
+                    vFormat = formato.format(valorTotal);
+
+                } else if(nomePlano.equals("Diaria Simples")){
+
+                    if (this.jTFCorbertura.getText().equals("Sim")){
+                        result = diasSobrando * valorDiario;
+                        valorTotal = result + kmResult + valorCobertura;
+                    }else{
+                        result = diasSobrando * valorDiario;
+                        valorTotal = result + kmResult;
+                    }
+                    vFormat = formato.format(valorTotal);
+
+                }
+
+                this.jTFValorTotal.setText(vFormat);
 
             }
             if (dataAtual.before(dataEntrega))  // se dataAtual é anterior a dataEntrega
@@ -774,11 +680,33 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
 
                 double result;
 
-                result = (diasSobrando * valorDiario); // resultado de dias sobrando
+                if (nomePlano.equals("Diaria Quilometrada")){
 
-                valorTotal =(int) (result - kmResult);
+                    if (this.jTFCorbertura.getText().equals("Sim")){
+                        result = diasSobrando * valorDiarioQuilometrado;
+                        valorTotal = result + kmResult + valorCobertura ;
+                    }else{
+                        result = diasSobrando * valorDiarioQuilometrado;
+                        valorTotal = result + kmResult;
+                    }
+                    
+                    vFormat = formato.format(valorTotal);
 
-                this.jTFValorTotal.setText(String.valueOf(valorTotal));
+                } else if(nomePlano.equals("Diaria Simples")){
+
+                    if (this.jTFCorbertura.getText().equals("Sim")){
+                        result = diasSobrando * valorDiario;
+                        valorTotal = result + kmResult + valorCobertura;
+                    }else{
+                        result = diasSobrando * valorDiario;
+                        valorTotal = result + kmResult;
+                    }
+
+                    vFormat = formato.format(valorTotal);
+
+                }
+
+                this.jTFValorTotal.setText(vFormat);
             }
             if (dataAtual.equals(dataEntrega)){
 
@@ -789,7 +717,35 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
 
                 kmResult = (kmResult * valorLitroKM); // valor do desconto da KM
 
-                this.jTFValorTotal.setText(String.valueOf(kmResult));
+                double result;
+
+                if (nomePlano.equals("Diaria Quilometrada")){
+
+                    if (this.jTFCorbertura.getText().equals("Sim")){
+                        result = diasSobrando * valorDiarioQuilometrado;
+                        valorTotal = result + kmResult + valorCobertura ;
+                    }else{
+                        result = diasSobrando * valorDiarioQuilometrado;
+                        valorTotal = result + kmResult;
+                    }
+
+                    vFormat = formato.format(valorTotal);
+
+                } else if(nomePlano.equals("Diaria Simples")){
+
+                    if (this.jTFCorbertura.getText().equals("Sim")){
+                        result = diasSobrando * valorDiario;
+                        valorTotal = result + kmResult + valorCobertura;
+                    } else {
+                        result = diasSobrando * valorDiario;
+                        valorTotal = result + kmResult;
+                    }
+
+                    vFormat = formato.format(valorTotal);
+
+                }
+
+                this.jTFValorTotal.setText(String.valueOf(vFormat));
 
             }
 
@@ -805,20 +761,32 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
 
     private void jTFKMFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTFKMFinalFocusLost
         // TODO add your handling code here:
-        int kmFinal = Integer.parseInt(this.jTFKMFinal.getText());
-        int kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-        if ( kmFinal < kmInicial)
-        {
-            JOptionPane.showMessageDialog(null, "É necessário que a Quilometragem Final seja maior que a Inicial!","Atenção" , JOptionPane.WARNING_MESSAGE);
-            this.jTFKMFinal.setText("");
-            this.jTFKMFinal.grabFocus();
-        }
+        if (!this.jTFKMFinal.getText().isEmpty()){
+            int kmFinal = Integer.parseInt(this.jTFKMFinal.getText());
+            int kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
+
+            if ( kmFinal < kmInicial)
+            {
+                JOptionPane.showMessageDialog(null, "É necessário que a Quilometragem Final seja maior que a Inicial!","Atenção" , JOptionPane.WARNING_MESSAGE);
+                this.jTFKMFinal.setText("");
+                this.jTFKMFinal.grabFocus();
+            }
+
+        }else
+            JOptionPane.showMessageDialog(null, "É necessário digitar a Quilometragem Final!","Atenção" , JOptionPane.WARNING_MESSAGE);
+
+        
     }//GEN-LAST:event_jTFKMFinalFocusLost
 
     private void jRBNaoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jRBNaoMouseClicked
         // TODO add your handling code here:
         this.jTFQntVezes.setEnabled(true);
     }//GEN-LAST:event_jRBNaoMouseClicked
+
+    private void jBCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBCancelarActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jBCancelarActionPerformed
 
     /**
     * @param args the command line arguments
@@ -836,7 +804,6 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jBCancelar;
     private javax.swing.JButton jBConfirmar;
-    private javax.swing.JButton jBInserirRevisao;
     private javax.swing.JComboBox jCBHoraEntrega;
     private com.toedter.calendar.JDateChooser jDCDataEntrega;
     private javax.swing.JFormattedTextField jFTFCPF;
@@ -854,9 +821,7 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
     private javax.swing.JLabel jLPlacaVeiculo;
     private javax.swing.JLabel jLRS;
     private javax.swing.JLabel jLRS2;
-    private javax.swing.JLabel jLRS3;
     private javax.swing.JLabel jLValorPrevisto;
-    private javax.swing.JLabel jLValorRevisao;
     private javax.swing.JLabel jLValorTotal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton jRBNao;
@@ -874,7 +839,6 @@ public class FrmRegistrarEntrega extends javax.swing.JDialog {
     private javax.swing.JTextField jTFPlacaVeiculo;
     private javax.swing.JTextField jTFQntVezes;
     private javax.swing.JTextField jTFValorPrevisto;
-    private javax.swing.JTextField jTFValorRevisao;
     private javax.swing.JTextField jTFValorTotal;
     // End of variables declaration//GEN-END:variables
 
