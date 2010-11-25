@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -24,7 +26,11 @@ public class FrmRevisao extends javax.swing.JDialog {
     private ControladoraRevisao controlRevisao;
     private Vector dadosEntrega;
     Double valorTotal;
+    int ultRevisao;
+    int codLocacao;
 
+    public FrmRevisao() {
+    }
     public Double getValorTotal() {
         return valorTotal;
     }
@@ -34,10 +40,11 @@ public class FrmRevisao extends javax.swing.JDialog {
     }
 
 
-    public FrmRevisao(ControladoraFuncionario controladoraFuncionario, ControladoraOficina controladoraOficina, ControladoraRevisao controladoraRevisao, Vector dados) {
+    public FrmRevisao(ControladoraFuncionario controladoraFuncionario, ControladoraOficina controladoraOficina, ControladoraRevisao controladoraRevisao, Vector dados) throws MinhaException, SQLException, ConexaoException {
         initComponents();
         this.setModal(true);
         this.dadosEntrega = dados;
+        codLocacao = Integer.parseInt(dadosEntrega.get(1).toString());
         this.controlFunc = controladoraFuncionario;
         this.controlOf = controladoraOficina;
         this.controlRevisao = controladoraRevisao;
@@ -83,12 +90,17 @@ public class FrmRevisao extends javax.swing.JDialog {
         Vector revisao = new Vector();
 
         if(this.verificaCamposVazios()){
-            
+
+            Date dataEntra = jDC_dataEntrada.getDate();
+            Date dataSai   = jDC_dataSaida.getDate();
+            java.sql.Date dataE = new java.sql.Date(dataEntra.getTime());
+            java.sql.Date dataS = new java.sql.Date(dataSai.getTime());
+
             revisao.add(this.tfNEntrega.getText());
             revisao.add(this.taDescricao.getText());
             revisao.add(this.tfValorTotal.getText());
-            revisao.add(this.jDC_dataEntrada.getDate());
-            revisao.add(this.jDC_dataSaida.getDate());
+            revisao.add(dataE);
+            revisao.add(dataS);
             
             String responsavel;
             if(this.rbMec.isSelected())
@@ -97,6 +109,8 @@ public class FrmRevisao extends javax.swing.JDialog {
                 responsavel = "oficina";
             
             revisao.add(responsavel);
+            revisao.add(cbResponsavel.getSelectedItem());
+            revisao.add(codLocacao);
             return revisao;
         }
 
@@ -105,8 +119,6 @@ public class FrmRevisao extends javax.swing.JDialog {
 
     }
 
-
-    
     private Vector opcoesCombo(String responsavel) throws ConexaoException
     {
         Vector nomes = new Vector();
@@ -383,17 +395,18 @@ public class FrmRevisao extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void preencherCampos() {
+    private void preencherCampos() throws MinhaException, SQLException, ConexaoException {
         
-        Vector carro = (Vector) this.dadosEntrega.get(0);
+        Vector carro = controlRevisao.obterCarro(dadosEntrega, 0);
+
+        Vector vetCarro = (Vector) carro.get(0);
         
-        int numeroEntrega = Integer.parseInt(this.dadosEntrega.get(1).toString());
-        numeroEntrega = numeroEntrega + 1;
+        int numeroEntrega = Integer.parseInt(this.dadosEntrega.get(0).toString());
         
         this.tfNEntrega.setText("" + numeroEntrega);
-        this.tfNomeModelo.setText(carro.get(15).toString());
-        this.tfPlaca.setText(carro.get(0).toString());
-        
+        this.tfNomeModelo.setText(vetCarro.get(0).toString());
+        this.tfPlaca.setText(vetCarro.get(1).toString());
+        this.tfChassi.setText(vetCarro.get(2).toString());
     }
 
     private void rbMecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbMecActionPerformed
@@ -433,14 +446,24 @@ public class FrmRevisao extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cbResponsavelItemStateChanged
 
-
-
     private void bConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bConfirmarActionPerformed
 
         if(this.verificaCamposVazios()){
             Vector novaRevisao = this.criarRevisao();
-            this.controlRevisao.setNovaRevisao(novaRevisao);
-            this.setVisible(false);
+            try {
+                this.controlRevisao.inserirRevisao(novaRevisao);
+                JOptionPane.showMessageDialog(null, "Revisão Inserida com Sucesso!");
+            } catch (MinhaException ex) {
+                Logger.getLogger(FrmRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
+                Logger.getLogger(FrmRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ConexaoException ex) {
+                Logger.getLogger(FrmRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            this.dispose();
         }
         
     }//GEN-LAST:event_bConfirmarActionPerformed

@@ -2,6 +2,7 @@ package dao;
 
 import domain.Carro;
 import domain.GrupoCarro;
+import domain.Locacao;
 import java.sql.SQLException;
 import java.util.Vector;
 import util.Conexao;
@@ -13,9 +14,11 @@ public interface CarroDao {
 
     public Carro selecionarCarro(int codGrupoCar) throws MinhaException, SQLException, ConexaoException;
 
+    public int obterCodCarro(int codLocacao) throws MinhaException, SQLException, ConexaoException;
+
     public void inserirCarro (Carro carro) throws MinhaException, SQLException, ConexaoException;
 
-    public Carro selecionarCarro (Carro carro) throws MinhaException, SQLException, ConexaoException;
+    public Carro selecionarCarro(Locacao loca) throws MinhaException, SQLException, ConexaoException;
 
     public void removerCarro (Carro carro) throws MinhaException, SQLException, ConexaoException;
 

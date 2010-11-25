@@ -44,22 +44,11 @@
                               <Component id="jCBHoraEntrega" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="jLPagRealizado" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLValorRevisao" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jLRS3" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jTFValorRevisao" min="-2" pref="96" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLPagRealizado" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
-                                      <Component id="jBInserirRevisao" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="140" max="-2" attributes="0"/>
                                       <Component id="jLValorTotal" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="jLRS2" min="-2" max="-2" attributes="0"/>
@@ -255,15 +244,11 @@
               <Component id="jSeparator3" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLValorRevisao" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLRS3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jTFValorRevisao" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jBInserirRevisao" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLRS2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLValorTotal" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jTFValorTotal" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="73" max="32767" attributes="0"/>
+              <EmptySpace pref="76" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jBConfirmar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jBCancelar" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -466,30 +451,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="R$"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLValorRevisao">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Valor Revisao"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="jTFValorRevisao">
-      <Properties>
-        <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="enabled" type="boolean" value="false"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLRS3">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="R$"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="jBInserirRevisao">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Inserir Revisao"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBInserirRevisaoActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator3">
     </Component>

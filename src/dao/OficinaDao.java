@@ -11,7 +11,7 @@ public interface OficinaDao {
 
     public Vector<Oficina> selecionarTodasOficinas() throws MinhaException, ConexaoException, SQLException;
 
-    public Oficina selecionarOficina (Oficina oficina);
+    public Oficina selecionarOficinaPorNome(String nome) throws SQLException, ConexaoException;
 
     public void removerOficina (Oficina oficina) throws SQLException, ClassNotFoundException, ConexaoException, MinhaException;
 

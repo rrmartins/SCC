@@ -31,7 +31,9 @@
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jCBCampo" min="-2" pref="138" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="420" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="289" max="-2" attributes="0"/>
+                      <Component id="jBFazerRevisao" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jBInserir" min="-2" pref="76" max="-2" attributes="1"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jBAtualizar" min="-2" pref="77" max="-2" attributes="1"/>
@@ -57,6 +59,7 @@
                   <Component id="jBRemover" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jBAtualizar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jBInserir" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jBFazerRevisao" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
@@ -205,6 +208,14 @@
       </Properties>
       <Events>
         <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jCBCampoFocusLost"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="jBFazerRevisao">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Fazer Revis&#xe3;o..."/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jBFazerRevisaoActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

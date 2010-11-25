@@ -183,10 +183,6 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
         jTFCorbertura = new javax.swing.JTextField();
         jLValorTotal = new javax.swing.JLabel();
         jLRS2 = new javax.swing.JLabel();
-        jLValorRevisao = new javax.swing.JLabel();
-        jTFValorRevisao = new javax.swing.JTextField();
-        jLRS3 = new javax.swing.JLabel();
-        jBInserirRevisao = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JSeparator();
         jFTFCPF = new javax.swing.JFormattedTextField();
         jTFGC = new javax.swing.JTextField();
@@ -283,20 +279,6 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
 
         jLRS2.setText("R$");
 
-        jLValorRevisao.setText("Valor Revisao");
-
-        jTFValorRevisao.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTFValorRevisao.setEnabled(false);
-
-        jLRS3.setText("R$");
-
-        jBInserirRevisao.setText("Inserir Revisao");
-        jBInserirRevisao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jBInserirRevisaoActionPerformed(evt);
-            }
-        });
-
         try {
             jFTFCPF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###.###.###-##")));
         } catch (java.text.ParseException ex) {
@@ -337,20 +319,11 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jCBHoraEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLPagRealizado, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(jLValorRevisao)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLRS3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jTFValorRevisao, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLPagRealizado)
+                                .addGap(96, 96, 96)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(17, 17, 17)
-                                        .addComponent(jBInserirRevisao)
-                                        .addGap(18, 18, 18)
+                                        .addGap(140, 140, 140)
                                         .addComponent(jLValorTotal)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLRS2)
@@ -502,14 +475,10 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLValorRevisao)
-                    .addComponent(jLRS3)
-                    .addComponent(jTFValorRevisao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBInserirRevisao)
                     .addComponent(jLRS2)
                     .addComponent(jLValorTotal)
                     .addComponent(jTFValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 76, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jBConfirmar)
                     .addComponent(jBCancelar))
@@ -617,7 +586,6 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
                                 this.jCBPlano.setEnabled(true);
                                 this.jTFCorbertura.setText("");
                                 this.jTFValorPrevisto.setText("");
-                                this.jTFValorRevisao.setText("");
                                 this.jTFValorTotal.setText("");
                                 this.jTFQntVezes.setText("");
 
@@ -649,95 +617,6 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
         }else
             JOptionPane.showMessageDialog(null, "É necessário o CPF do Cliente!","Atenção" , JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_jBConfirmarActionPerformed
-
-    private void jBInserirRevisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBInserirRevisaoActionPerformed
-        // TODO add your handling code here:
-        FrmRevisao rev = new FrmRevisao(controladoraFuncionario, controladoraOficina, controladoraRevisao, dadosEntrega);
-
-        int kmFinal, kmInicial, kmResult, valorRevisao;
-        Date dataLocacao = null;
-        Date dataEntrega = null;
-        Date dataAtual = new Date();
-        String cpf = this.jFTFCPF.getText();
-        Validador valida = new Validador();
-        cpf = valida.tiraPontosCPF(cpf);
-
-        valorRevisao = Integer.parseInt(this.jTFValorRevisao.getText());
-        try {
-            Vector carro = this.controlEntrega.obterCarro(cpf);
-
-            dataLocacao = (Date) carro.get(6);
-            dataEntrega = (Date) carro.get(7);
-            //String teste = carro.get(9).toString();
-            double valor = Double.parseDouble(carro.get(8).toString());
-            double valorLitroKM = Integer.parseInt(carro.get(9).toString());
-            int valorTotal;
-            if (dataAtual.after(dataEntrega)) // se dataAtual for posterior a data de entrega
-            {
-                long milisecInicial = dataAtual.getTime();
-                long milisecFinal = dataEntrega.getTime();
-                long dif = milisecFinal - milisecInicial;
-
-                kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-                kmFinal   = Integer.parseInt(this.jTFKMFinal.getText());
-
-                kmResult = +(kmFinal - kmInicial);
-
-                kmResult = (int) (kmResult * valorLitroKM); // valor do desconto da KM
-
-                long result = (((dif / 1000) / 60) / 60) / 24;
-
-                result = (long) (result * valor); // resultado de dias sobrando
-
-                valorTotal = (int) (result + kmResult + valorRevisao);
-
-                this.jTFValorTotal.setText(String.valueOf(valorTotal));
-
-            }
-            if (dataAtual.before(dataEntrega))  // se dataAtual é anterior a dataEntrega
-            {
-                long milisecInicial = dataAtual.getTime();
-                long milisecFinal = dataEntrega.getTime();
-                long dif = milisecFinal - milisecInicial;
-
-                kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-                kmFinal   = Integer.parseInt(this.jTFKMFinal.getText());
-
-                kmResult = +(kmFinal - kmInicial);
-
-                kmResult = (int) (kmResult * valorLitroKM); // valor do desconto da KM
-
-                long result = (((dif / 1000) / 60) / 60) / 24;
-
-                result = (long) (result * valor); // resultado de dias sobrando
-
-                valorTotal = (int) (result - kmResult + valorRevisao);
-
-                this.jTFValorTotal.setText(String.valueOf(valorTotal));
-            }
-            if (dataAtual.equals(dataEntrega)){
-
-                kmInicial = Integer.parseInt(this.jTFKMInicial.getText());
-                kmFinal   = Integer.parseInt(this.jTFKMFinal.getText());
-
-                kmResult = +(kmFinal - kmInicial);
-
-                kmResult = (int) ((kmResult * valorLitroKM) + valorRevisao); // valor do desconto da KM
-
-                this.jTFValorTotal.setText(String.valueOf(kmResult));
-
-            }
-
-        } catch (ConexaoException ex) {
-            Logger.getLogger(FrmRegistrarEntregaAlterar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(FrmRegistrarEntregaAlterar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (MinhaException ex) {
-            Logger.getLogger(FrmRegistrarEntregaAlterar.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-
-    }//GEN-LAST:event_jBInserirRevisaoActionPerformed
 
     private void jCBHoraEntregaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jCBHoraEntregaFocusLost
            // TODO add your handling code here:
@@ -845,7 +724,6 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jBCancelar;
     private javax.swing.JButton jBConfirmar;
-    private javax.swing.JButton jBInserirRevisao;
     private javax.swing.JComboBox jCBHoraEntrega;
     private javax.swing.JComboBox jCBPlano;
     private com.toedter.calendar.JDateChooser jDCDataEntrega;
@@ -865,9 +743,7 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
     private javax.swing.JLabel jLPlano;
     private javax.swing.JLabel jLRS;
     private javax.swing.JLabel jLRS2;
-    private javax.swing.JLabel jLRS3;
     private javax.swing.JLabel jLValorPrevisto;
-    private javax.swing.JLabel jLValorRevisao;
     private javax.swing.JLabel jLValorTotal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton jRBNao;
@@ -885,7 +761,6 @@ public class FrmRegistrarEntregaAlterar extends javax.swing.JDialog {
     private javax.swing.JTextField jTFPlacaVeiculo;
     private javax.swing.JTextField jTFQntVezes;
     private javax.swing.JTextField jTFValorPrevisto;
-    private javax.swing.JTextField jTFValorRevisao;
     private javax.swing.JTextField jTFValorTotal;
     // End of variables declaration//GEN-END:variables
 

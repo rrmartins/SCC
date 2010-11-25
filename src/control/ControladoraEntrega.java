@@ -62,7 +62,7 @@ public class ControladoraEntrega {
         data = formato.parse(entregas);
         Locacao loca = new Locacao();
         loca.setCodLocacao(Integer.parseInt(linha.get(0).toString()));
-        entrega.setCodLocacao(loca);
+        entrega.setLocacao(loca);
         entrega.setQuilometragemFinal(Integer.parseInt(linha.get(1).toString()));
         entrega.setDataEntrega(data);
         entrega.setHoraEntrega(horaEntre);
@@ -118,7 +118,7 @@ public class ControladoraEntrega {
     {
         Vector linha = new Vector();
         linha.addElement(entre.getCodEntrega());
-        linha.addElement(entre.getCodLocacao().getCodLocacao());
+        linha.addElement(entre.getLocacao().getCodLocacao());
         linha.addElement(entre.getQuilometragemFinal());
         linha.addElement(entre.getDataEntrega());
         linha.addElement(entre.getHoraEntrega());

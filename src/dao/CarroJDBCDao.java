@@ -2,6 +2,7 @@ package dao;
 
 import domain.Carro;
 import domain.GrupoCarro;
+import domain.Locacao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,6 +73,41 @@ public class CarroJDBCDao implements CarroDao {
         return car;
     }
 
+    public int obterCodCarro(int codLocacao) throws MinhaException, SQLException, ConexaoException {
+
+        int codCarro;
+
+        this.connection = FabricaConexao.obterConexao();
+
+
+        sql = "select ca.cod_carro as cod "+
+                "from locacao as l, "+
+                     "carro as ca "+
+                "where ca.cod_carro = l.cod_carro and "+
+                      "l.cod_locacao = ? ;";
+
+        PreparedStatement pStmt = null;
+
+        pStmt = this.connection.prepareStatement(sql);
+
+        pStmt.setInt(1, codLocacao);
+
+        ResultSet result;
+        result = pStmt.executeQuery();
+
+        if (result == null || !result.next()) {
+            this.connection.close();
+            throw new MinhaException(" Não existe cliente cadastrado com esse CPF !");
+
+        } else {
+            codCarro = result.getInt("cod");
+        }
+
+        this.connection.close();
+
+
+        return codCarro;
+    }
 
     public void inserirCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
 
@@ -109,8 +145,42 @@ public class CarroJDBCDao implements CarroDao {
         }
     }
 
-    public Carro selecionarCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Carro selecionarCarro(Locacao loca) throws MinhaException, SQLException, ConexaoException {
+
+        Carro carro = new Carro();
+        this.connection = FabricaConexao.obterConexao();
+
+        sql = "select ca.modelo, "+
+                     "ca.placa, "+
+                     "ca.chassi "+
+               " from carro ca, "+
+                    " locacao lo "+
+                "where ca.cod_carro = lo.cod_carro and "+
+                      "lo.cod_locacao = ?; ";
+
+        PreparedStatement pStmt = null;
+
+        pStmt = this.connection.prepareStatement(sql);
+
+        pStmt.setInt(1, loca.getCodLocacao());
+
+
+        ResultSet result;
+        result = pStmt.executeQuery();
+
+        if (result == null || !result.next()) {
+            this.connection.close();
+            throw new MinhaException(" Não existe cliente cadastrado com esse CPF !");
+
+        } else {
+            carro.setModelo(result.getString("modelo"));
+            carro.setPlaca(result.getString("placa"));
+            carro.setChassi(result.getString("chassi"));
+        }
+
+        this.connection.close();
+
+        return carro;
     }
 
     public void removerCarro(Carro carro) throws MinhaException, SQLException, ConexaoException {
@@ -279,7 +349,7 @@ public class CarroJDBCDao implements CarroDao {
 
             pStmt.executeUpdate();
 
-
+            connection.close();
         } catch (SQLException erro) {
 
             connection.rollback();
@@ -289,7 +359,6 @@ public class CarroJDBCDao implements CarroDao {
 
 
     }
-
 
     public void alterarKMDisponibilidade(Vector linha) throws SQLException, ConexaoException {
         this.connection = FabricaConexao.obterConexao();
@@ -322,6 +391,7 @@ public class CarroJDBCDao implements CarroDao {
         }
     }
 
+    //obterCodCarro
     /*
     public Carro selecionarCarro(int codGrupoCar) throws MinhaException, SQLException, ConexaoException {
 

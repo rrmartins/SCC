@@ -48,7 +48,7 @@ public class ControladoraPagamento {
 
         Entrega ent = new Entrega();
         ent.setCodEntrega(Integer.parseInt(entrega.get(0).toString()));
-        ent.setCodLocacao(loca);
+        ent.setLocacao(loca);
 
         paga.setDataEmissao(dataAtual);
         paga.setDataVencimento(dataVencimento);

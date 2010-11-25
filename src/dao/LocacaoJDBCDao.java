@@ -26,7 +26,6 @@ public class LocacaoJDBCDao implements LocacaoDao {
         this.connection = val;
     }
     
-
     public void inserirLocacao(Locacao locacao) throws MinhaException, SQLException, ConexaoException {
         
         CarroJDBCDao carroJDBCDao = new CarroJDBCDao();
@@ -321,6 +320,41 @@ public class LocacaoJDBCDao implements LocacaoDao {
         return loca;
     }
 
+    public int obterCodLocacao(String nome) throws MinhaException, ConexaoException, SQLException {
+
+        
+        this.connection = FabricaConexao.obterConexao();
+
+        int codLoca;
+
+        sql = "select max(e.cod_locacao) as cod "+
+                   "from locacao as l, "+
+                        "cliente as cl ,"+
+                        "entrega as e "+
+                   "where e.cod_locacao = l.cod_locacao and "+
+                         "l.cod_cliente = cl.cod_cliente and "+
+                         "cl.nome  = '"+nome+"';";
+
+
+        PreparedStatement pStmt = this.connection.prepareStatement(sql);
+
+        ResultSet result = pStmt.executeQuery();
+
+        if(result == null || !result.next())
+        {
+            this.connection.close();
+            throw  new MinhaException(" Não existe cliente cadastrado com esse CPF !");
+        }
+        else
+        {
+            codLoca = result.getInt("cod");
+
+        }
+
+        this.connection.close();
+
+        return codLoca;
+    }
 
 }
 

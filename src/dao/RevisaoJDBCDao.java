@@ -36,27 +36,26 @@ public class RevisaoJDBCDao implements RevisaoDao {
 
         this.connection = FabricaConexao.obterConexao();
 
-        String sql = "SELECT r.cod_revisao as cod_revisao, " +
-                "c.nome as nome, r.cod_entrega as cod_entrega, " +
-                "f.nome as nome_funcionario, r.cod_funcionario as cod_funcionario, " +
-                "o.nome_oficina as nome_oficina, r.cod_oficina as cod_oficina, " +
-                "r.desc_revisao as desc_revisao, r.valor_revisao as valor_revisao, " +
-                "r.data_entrada as data_entrada, r.data_saida as data_saida, " +
-                "r.cod_locacao as cod_locacao, " +
-                "car.placa as placa, car.chassi as chassi " +
-                "FROM revisao r, " +
-                    "entrega e, " +
-                    "funcionario f, " +
-                    "oficina o, " +
-                    "locacao l, " +
-                    "cliente c, " +
-                    "carro car " +
-                "WHERE r.cod_entrega = e.cod_entrega AND " +
-                "e.cod_locacao = l.cod_locacao AND " +
-                "l.cod_cliente = c.cod_cliente AND " +
-                "r.cod_funcionario = f.cod_funcionario AND " +
-                "r.cod_oficina = o.cod_oficina AND " +
-                "l.cod_carro = car.cod_carro ; ";
+        String sql = "SELECT r.cod_revisao as cod_revisao, "+
+                            "c.nome as nome," +
+                            " r.cod_entrega as cod_entrega, "+
+                            "f.nome as nome_funcionario, " +
+                            "r.cod_funcionario as cod_funcionario, "+
+                            "o.nome_oficina as nome_oficina, " +
+                            "r.cod_oficina as cod_oficina, "+
+                            "r.desc_revisao as desc_revisao, " +
+                            "r.valor_revisao as valor_revisao, "+
+                            "r.data_entrada as data_entrada, " +
+                            "r.data_saida as data_saida, "+
+                            "r.cod_locacao as cod_locacao, "+
+                            "car.placa as placa, " +
+                            "car.chassi as chassi "+
+                        "FROM revisao as r LEFT JOIN entrega e on r.cod_entrega = e.cod_entrega "+
+                            "LEFT JOIN locacao as l on e.cod_locacao = l.cod_locacao "+
+                            "LEFT JOIN cliente as c on l.cod_cliente = c.cod_cliente "+
+                            "LEFT JOIN funcionario as f on r.cod_funcionario = f.cod_funcionario "+
+                            "LEFT JOIN oficina as o on r.cod_oficina = o.cod_oficina "+
+                            "LEFT JOIN carro as car on l.cod_carro = car.cod_carro; ";
 
         PreparedStatement pStmt = this.connection.prepareStatement(sql);
 
@@ -117,6 +116,35 @@ public class RevisaoJDBCDao implements RevisaoDao {
 
     }
 
+    public int ultRevisao() throws MinhaException, SQLException, ConexaoException {
+
+        this.connection = FabricaConexao.obterConexao();
+
+        String sql = "select max(cod_revisao) from revisao;";
+
+        PreparedStatement pStmt = this.connection.prepareStatement(sql);
+
+        ResultSet result = pStmt.executeQuery();
+
+        int ultRevisao ;
+
+        if(result == null || !result.next())
+            throw new MinhaException("Não existem Revisões cadastrados no Sistema !");
+        else{
+            do{
+
+                ultRevisao = result.getInt("cod_revisao");
+
+
+            }while(result.next());
+        }
+
+        this.connection.close();
+
+        return ultRevisao;
+
+    }
+
     public Revisao selecionarRevisao(Revisao revisao) throws MinhaException, SQLException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -136,13 +164,13 @@ public class RevisaoJDBCDao implements RevisaoDao {
         this.connection.close();
     }
 
-    public void alterarRevisao(Revisao revisao) throws MinhaException, SQLException, ConexaoException {
+    public void alterarRevisao(Revisao revisao, Conexao connect) throws MinhaException, SQLException, ConexaoException {
 
-        this.connection = FabricaConexao.obterConexao();
+        //this.connection = FabricaConexao.obterConexao();
         
-        this.connection.setAutoCommit(true);
+        connect.setAutoCommit(true);
 
-            String sql = "UPDATE FROM revisao " +
+            String sql = "UPDATE revisao set " +
                     "cod_locacao = ? , " +
                     "cod_entrega = ? , " +
                     "cod_funcionario = ? , " +
@@ -153,51 +181,83 @@ public class RevisaoJDBCDao implements RevisaoDao {
                     "data_saida = ? " +
                     "WHERE cod_revisao = ? ; ";
 
-            PreparedStatement pStmt = this.connection.prepareStatement(sql);
+            PreparedStatement pStmt = connect.prepareStatement(sql);
             pStmt.setInt(1, revisao.getEntrega().getLocacao().getCodLocacao());
             pStmt.setInt(2, revisao.getEntrega().getCodEntrega());
-            pStmt.setInt(3, revisao.getFuncionario().getCodFuncionario());
-            pStmt.setInt(4, revisao.getOficina().getCodOficina());
+
+            String func = String.valueOf(revisao.getFuncionario());
+            if (func.equals("null")){
+                pStmt.setObject(3, null);
+            }else
+            {
+                pStmt.setInt(3, revisao.getFuncionario().getCodFuncionario());
+            }
+            
+            String ofici = String.valueOf(revisao.getOficina());
+            if (ofici.equals("null")){
+                pStmt.setObject(4, null);
+            }else
+            {
+                pStmt.setInt(4, revisao.getOficina().getCodOficina());
+            }
             pStmt.setString(5, revisao.getDescRevisao());
             pStmt.setDouble(6, revisao.getValorRevisao());
-            pStmt.setDate(7, (Date) revisao.getDataEntrada());
-            pStmt.setDate(8, (Date) revisao.getDataSaida());
+            pStmt.setDate(7, revisao.getDataEntrada());
+            pStmt.setDate(8, revisao.getDataSaida());
             pStmt.setInt(9, revisao.getCodRevisao());
 
             pStmt.executeUpdate();
 
-            this.connection.close();
+            //this.connection.close();
 
 
     }
     
-    public void inserirRevisao(Revisao revisao, Conexao connection) throws MinhaException, SQLException {
+    public void inserirRevisao(Revisao revisao) throws MinhaException, SQLException, ConexaoException {
 
-        this.connection = connection;
+        this.connection = FabricaConexao.obterConexao();
 
         try {
             this.connection.setAutoCommit(false);
 
             String sql = "INSERT INTO revisao (cod_locacao, cod_entrega, cod_funcionario , " +
                     "cod_oficina, desc_revisao, valor_revisao, data_entrada, data_saida) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
             PreparedStatement pStmt = this.connection.prepareStatement(sql);
             pStmt.setInt(1, revisao.getEntrega().getLocacao().getCodLocacao());
             pStmt.setInt(2, revisao.getEntrega().getCodEntrega());
-            pStmt.setInt(3, revisao.getFuncionario().getCodFuncionario());
-            pStmt.setInt(4, revisao.getOficina().getCodOficina());
+            
+            String func = String.valueOf(revisao.getFuncionario());
+            if (func.equals("null")){
+                pStmt.setObject(3, null);
+            }else
+            {
+                pStmt.setInt(3, revisao.getFuncionario().getCodFuncionario());
+            }
+
+            String oficina = String.valueOf(revisao.getOficina());
+            if (oficina.equals("null"))
+            {
+                pStmt.setObject(4, null);
+            }else {
+                pStmt.setInt(4, revisao.getOficina().getCodOficina());
+            }
+            
             pStmt.setString(5, revisao.getDescRevisao());
             pStmt.setDouble(6, revisao.getValorRevisao());
-            pStmt.setDate(7, (Date) revisao.getDataEntrada());
-            pStmt.setDate(8, (Date) revisao.getDataSaida());
+            pStmt.setDate(7,revisao.getDataEntrada());
+            pStmt.setDate(8,revisao.getDataSaida());
 
             pStmt.executeUpdate();
-
+            this.connection.commit();
         }
         catch (SQLException erro) {
             this.connection.rollback();
             throw new MinhaException(erro.getMessage());
+        }
+        finally {
+            this.connection.close();
         }
     }
 }

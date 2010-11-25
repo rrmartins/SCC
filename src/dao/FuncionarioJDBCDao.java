@@ -3,16 +3,12 @@ package dao;
 import domain.Cidade;
 import domain.Endereco;
 import domain.Funcionario;
-import domain.Pessoa;
 import domain.UF;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import util.Conexao;
 import util.ConexaoException;
 import util.MinhaException;
@@ -286,6 +282,51 @@ public class FuncionarioJDBCDao implements FuncionarioDao {
         this.connection.close();
 
         return funcionariosEncontrados;
+    }
+
+    public Funcionario selecionarFuncionariosPorNome(String nome) throws MinhaException, ConexaoException, SQLException {
+
+        this.connection = FabricaConexao.obterConexao();
+
+        Funcionario funcionario = new Funcionario();
+
+        String sql = "SELECT * FROM funcionario " +
+                "WHERE nome = ? ;";
+
+        PreparedStatement pStmt = this.connection.prepareStatement(sql);
+
+        pStmt.setString(1, nome);
+
+        ResultSet result = pStmt.executeQuery();
+        result.next();
+
+        do{
+            
+            Endereco endereco = new Endereco();
+            Cidade cidade = new Cidade();
+
+            cidade.setCodCidade(result.getInt("cod_cidade"));
+
+            endereco.setNomeRua(result.getString("rua"));
+            endereco.setNumero(result.getInt("numero_casa"));
+            endereco.setNomeBairro(result.getString("bairro"));
+            endereco.setCidade(cidade);
+
+            funcionario.setCodFuncionario(result.getInt("cod_funcionario"));
+            funcionario.setNome(result.getString("nome"));
+            funcionario.setCpf(result.getString("cpf"));
+
+            funcionario.setEmail(result.getString("email"));
+            funcionario.setTelefone(result.getString("telefone"));
+            funcionario.setDataNasc(result.getDate("data_nasc"));
+            funcionario.setCargo(result.getString("cargo"));
+            funcionario.setEndereco(endereco);
+
+        }while(result.next());
+
+        this.connection.close();
+
+        return funcionario;
     }
 
 }

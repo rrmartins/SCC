@@ -19,7 +19,7 @@ public class FrmAtualizaRevisao extends FrmRevisao {
 
     private ControladoraRevisao controladora;
 
-    public FrmAtualizaRevisao(ControladoraFuncionario controladoraFuncionario, ControladoraOficina controladoraOficina, ControladoraRevisao controladoraRevisao, Vector dados) {
+    public FrmAtualizaRevisao(ControladoraFuncionario controladoraFuncionario, ControladoraOficina controladoraOficina, ControladoraRevisao controladoraRevisao, Vector dados) throws MinhaException, SQLException, ConexaoException {
         super(controladoraFuncionario, controladoraOficina, controladoraRevisao, dados);
         this.setModal(true);
         this.controladora = controladoraRevisao;

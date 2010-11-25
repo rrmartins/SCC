@@ -161,7 +161,14 @@ public class FabricaDao {
     }
 
     public static RevisaoDao getRevisaoDao (String tipo) {
-        return null;
+        if(tipo.equals("JDBC"))
+        {
+            return new RevisaoJDBCDao();
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

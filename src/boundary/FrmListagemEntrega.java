@@ -12,8 +12,10 @@
 package boundary;
 
 import control.ControladoraEntrega;
+import control.ControladoraFuncionario;
+import control.ControladoraOficina;
+import control.ControladoraRevisao;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +32,9 @@ import util.MinhaException;
 public class FrmListagemEntrega extends javax.swing.JDialog {
 
     ControladoraEntrega controlEntrega;
+    ControladoraFuncionario controlFunc;
+    ControladoraOficina controlOf;
+    ControladoraRevisao controlRevisao;
     Vector usuarioTipo = new Vector();
     Vector usuario     = new Vector();
 
@@ -60,6 +65,9 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
         usuario     = user;
         this.setLocationRelativeTo(null);
         this.controlEntrega = new ControladoraEntrega();
+        this.controlFunc = new ControladoraFuncionario();
+        this.controlOf   = new ControladoraOficina();
+        this.controlRevisao = new ControladoraRevisao();
 
         this.preencherTable();
     }
@@ -179,6 +187,7 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
         jBAtualizar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jCBCampo = new javax.swing.JComboBox();
+        jBFazerRevisao = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("SCC - Listagem Entrega");
@@ -259,6 +268,13 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
             }
         });
 
+        jBFazerRevisao.setText("Fazer Revisão...");
+        jBFazerRevisao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBFazerRevisaoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -270,7 +286,9 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCBCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(420, 420, 420)
+                        .addGap(289, 289, 289)
+                        .addComponent(jBFazerRevisao)
+                        .addGap(18, 18, 18)
                         .addComponent(jBInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jBAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -290,7 +308,8 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
                     .addComponent(jCBCampo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBRemover)
                     .addComponent(jBAtualizar)
-                    .addComponent(jBInserir))
+                    .addComponent(jBInserir)
+                    .addComponent(jBFazerRevisao))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -345,6 +364,45 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jBInserirActionPerformed
 
+    private void jBFazerRevisaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBFazerRevisaoActionPerformed
+        // TODO add your handling code here:
+        int linhaSelecionada = this.jTListagemEntrega.getSelectedRow();
+        int quantColunas = this.jTListagemEntrega.getColumnCount();
+
+            if(linhaSelecionada < 0 )
+            {
+                JOptionPane.showMessageDialog(null, "Selecione apenas uma Linha", "Informação", JOptionPane.WARNING_MESSAGE);
+            }
+            else
+            {
+                this.controlEntrega.setMarc(linhaSelecionada);
+
+                Vector linha = new Vector();
+
+                for(int i = 0; i < quantColunas; i++)
+                {
+                    linha.add(i, this.jTListagemEntrega.getModel().getValueAt(linhaSelecionada, i));
+                }
+                FrmRevisao revisao = null;
+                try {
+                    revisao = new FrmRevisao(controlFunc, controlOf, controlRevisao, linha);
+                    revisao.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    revisao.setModal(true);
+                    revisao.setVisible(true);
+                    this.limparTable();
+                    this.preencherTable();
+                } catch (MinhaException ex) {
+                    Logger.getLogger(FrmListagemEntrega.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(FrmListagemEntrega.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ConexaoException ex) {
+                    Logger.getLogger(FrmListagemEntrega.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                revisao.dispose();
+            }
+    }//GEN-LAST:event_jBFazerRevisaoActionPerformed
+
     /**
     * @param args the command line arguments
     
@@ -362,6 +420,7 @@ public class FrmListagemEntrega extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBAtualizar;
+    private javax.swing.JButton jBFazerRevisao;
     private javax.swing.JButton jBInserir;
     private javax.swing.JButton jBRemover;
     private javax.swing.JComboBox jCBCampo;

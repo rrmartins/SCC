@@ -85,7 +85,7 @@ public class EntregaJDBCDao implements EntregaDao {
 
             java.sql.Date dataE = new java.sql.Date(form.parse(dataEntre).getTime());
 
-            prepSt.setInt(1, entrega.getCodLocacao().getCodLocacao());
+            prepSt.setInt(1, entrega.getLocacao().getCodLocacao());
             prepSt.setInt(2, entrega.getQuilometragemFinal());
             prepSt.setDate(3, dataE);
             prepSt.setFloat(4, entrega.getValorTotal());
@@ -119,7 +119,7 @@ public class EntregaJDBCDao implements EntregaDao {
 
             java.sql.Date dt = new java.sql.Date (entrega.getDataEntrega().getTime());
 
-            pstmt.setInt(1, entrega.getCodLocacao().getCodLocacao());
+            pstmt.setInt(1, entrega.getLocacao().getCodLocacao());
             pstmt.setInt(2, entrega.getQuilometragemFinal());
             pstmt.setDate(3, dt);
             pstmt.setTime(4, entrega.getHoraEntrega());
@@ -182,7 +182,7 @@ public class EntregaJDBCDao implements EntregaDao {
                 Locacao loca = new Locacao();
                 loca.setCodLocacao(result.getInt("cod_locacao"));
                 ent.setCodEntrega(result.getInt("cod_entrega"));
-                ent.setCodLocacao(loca);
+                ent.setLocacao(loca);
                 ent.setQuilometragemFinal(result.getInt("quilometragem_final"));
                 ent.setDataEntrega(result.getDate("data_entrega"));
                 ent.setHoraEntrega(result.getTime("hora_entrega"));

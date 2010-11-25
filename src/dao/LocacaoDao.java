@@ -19,5 +19,7 @@ public interface LocacaoDao {
     public void inserirLocacao(Locacao locacao) throws MinhaException, SQLException, ConexaoException;
 
     public Locacao selecionarCarroPorCpf(String cpf) throws MinhaException, SQLException, ConexaoException;
+
+    public int obterCodLocacao(String nome) throws MinhaException, ConexaoException, SQLException;
 }
 

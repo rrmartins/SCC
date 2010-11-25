@@ -1,8 +1,11 @@
 
 package boundary;
 
+import control.ControladoraFuncionario;
+import control.ControladoraOficina;
 import control.ControladoraRevisao;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +21,8 @@ public class FrmListagemRevisao extends javax.swing.JDialog {
 
 
     private ControladoraRevisao controladoraRevisao = new ControladoraRevisao();
+    private ControladoraOficina controladoraOficina = new ControladoraOficina();
+    private ControladoraFuncionario controladoraFuncionario = new ControladoraFuncionario();
 
 
     public FrmListagemRevisao() throws ConexaoException {
@@ -179,11 +184,20 @@ public class FrmListagemRevisao extends javax.swing.JDialog {
                 linha.add(i, this.tabelaRevisao.getModel().getValueAt(linhaSelecionada, i));
             }
             this.controladoraRevisao.setMarc(linhaSelecionada);
-            //JDialog janela = new FrmAtualizaRevisao(controladoraRevisao);
-            //janela.setVisible(true);
-            this.limparTabela();
+            JDialog janela;
             try {
+                try {
+                    janela = new FrmRevisaoAlterar(linha);
+                    janela.setVisible(true);
+                } catch (ParseException ex) {
+                    Logger.getLogger(FrmListagemRevisao.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                this.limparTabela();
                 this.preencherTabela();
+            } catch (MinhaException ex) {
+                Logger.getLogger(FrmListagemRevisao.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmListagemRevisao.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ConexaoException ex) {
                 Logger.getLogger(FrmListagemRevisao.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -14,24 +14,14 @@ public class Entrega {
 
     private Time horaEntrega;
 
-    private Locacao codLocacao;
+    private Locacao Locacao;
 
-    private Locacao mLocacao;
-
-    public Locacao getCodLocacao() {
-        return codLocacao;
+    public Locacao getLocacao() {
+        return Locacao;
     }
 
-    public void setCodLocacao(Locacao codLocacao) {
-        this.codLocacao = codLocacao;
-    }
-
-    public Locacao getmLocacao() {
-        return mLocacao;
-    }
-
-    public void setmLocacao(Locacao mLocacao) {
-        this.mLocacao = mLocacao;
+    public void setLocacao(Locacao codLocacao) {
+        this.Locacao = codLocacao;
     }
 
     public int getValorTotal() {
@@ -69,14 +59,6 @@ public class Entrega {
 
     public void setHoraEntrega(Time horaEntrega) {
         this.horaEntrega = horaEntrega;
-    }
-
-    public Locacao getLocacao () {
-        return mLocacao;
-    }
-
-    public void setLocacao (Locacao val) {
-        this.mLocacao = val;
     }
 
     public int getQuilometragemFinal () {

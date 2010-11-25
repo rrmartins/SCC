@@ -67,8 +67,44 @@ public class OficinaJDBCDao implements OficinaDao {
         return vetOficinas;
     }
 
-    public Oficina selecionarOficina(Oficina oficina) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Oficina selecionarOficinaPorNome(String nome) throws SQLException, ConexaoException {
+        this.connection = FabricaConexao.obterConexao();
+
+        Oficina oficina = new Oficina();
+
+        sql = "select ofi.* from oficina ofi where ofi.nome_oficina = ? ;";
+
+        PreparedStatement pStmt = this.connection.prepareStatement(sql);
+
+        pStmt.setString(1, nome);
+
+        ResultSet result = pStmt.executeQuery();
+        result.next();
+
+        do{
+
+            Endereco endereco = new Endereco();
+            Cidade cidade = new Cidade();
+
+            cidade.setCodCidade(result.getInt("cod_cidade"));
+
+            endereco.setNomeRua(result.getString("rua"));
+            endereco.setNumero(result.getInt("numero_oficina"));
+            endereco.setNomeBairro(result.getString("bairro"));
+            endereco.setCidade(cidade);
+
+            oficina.setCodOficina(result.getInt("cod_oficina"));
+            oficina.setNomeOficina(result.getString("nome_oficina"));
+            oficina.setCnpj(result.getString("cnpj"));
+            oficina.setTelefone(result.getString("telefone"));
+            oficina.setCodCidade(cidade);
+            oficina.setEndereco(endereco);
+
+        }while(result.next());
+
+        this.connection.close();
+
+        return oficina;
     }
 
     public void removerOficina(Oficina oficina) throws SQLException,ConexaoException, ClassNotFoundException, MinhaException {

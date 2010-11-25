@@ -2,16 +2,25 @@
 
 package control;
 
+import dao.CarroDao;
+import dao.FabricaConexao;
 import dao.FabricaDao;
+import dao.FuncionarioDao;
+import dao.LocacaoDao;
+import dao.OficinaDao;
 import dao.RevisaoDao;
+import domain.Carro;
 import domain.Entrega;
 import domain.Funcionario;
+import domain.Locacao;
 import domain.Oficina;
 import domain.Revisao;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
+import util.Conexao;
 import util.ConexaoException;
 import util.MinhaException;
 
@@ -55,10 +64,10 @@ public class ControladoraRevisao {
         revisao.addElement(rev.getEntrega().getLocacao().getCarro().getPlaca());
         revisao.addElement(rev.getEntrega().getCodEntrega());
 
-        if(rev.getFuncionario() == null)
-            revisao.addElement(rev.getOficina().getNomeOficina());
+        if(rev.getFuncionario().getCodFuncionario() == 0)
+            revisao.addElement("O | "+rev.getOficina().getNomeOficina());
         else
-            revisao.addElement(rev.getFuncionario().getNome());
+            revisao.addElement("M | "+rev.getFuncionario().getNome());
 
         revisao.addElement(rev.getDescRevisao());
         revisao.addElement(rev.getValorRevisao());
@@ -73,11 +82,18 @@ public class ControladoraRevisao {
         return revisao;
     }
 
-    public Revisao novaRevisao(Vector revisao, ControladoraFuncionario cf, ControladoraOficina co) throws ParseException{
-
-        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+    public Revisao novaRevisao(Vector revisao) throws ParseException, MinhaException, ConexaoException, SQLException{
 
         Revisao nova = new Revisao();
+        
+        Locacao loca = new Locacao();
+        loca.setCodLocacao(Integer.parseInt(revisao.get(7).toString()));
+
+        Entrega entre = new Entrega();
+        entre.setCodEntrega(Integer.parseInt(revisao.get(0).toString()));
+        entre.setLocacao(loca);
+        nova.setEntrega(entre);
+
 
         nova.setDescRevisao(revisao.get(1).toString());
         
@@ -86,36 +102,44 @@ public class ControladoraRevisao {
         
         nova.setValorRevisao(Double.parseDouble(valorTotal));
 
-        java.sql.Date dataE = new java.sql.Date(formatoData.parse(revisao.get(5).toString()).getTime());
-        java.sql.Date dataS = new java.sql.Date(formatoData.parse(revisao.get(6).toString()).getTime());
-
-        nova.setDataEntrada(dataE);
-        nova.setDataSaida(dataS);
+        nova.setDataEntrada(Date.valueOf(revisao.get(3).toString()));
+        nova.setDataSaida(Date.valueOf(revisao.get(4).toString()));
         
-        if(revisao.get(5).toString().equals("mecanico"))
-            nova.setFuncionario(cf.getVetFuncionarios().get(cf.getMarc()));
-        else
-            nova.setOficina(co.getVetOficina().get(co.getMarc()));
+        if(revisao.get(5).toString().equals("mecanico")){
+            FuncionarioDao funDao = FabricaDao.getFuncionarioDao("JDBC");
+            Funcionario fun = funDao.selecionarFuncionariosPorNome(revisao.get(6).toString());
+            nova.setFuncionario(fun);
+        }
+        else{
+            OficinaDao oficDao = FabricaDao.getOficinaDao("JDBC");
+            Oficina of = oficDao.selecionarOficinaPorNome(revisao.get(6).toString());
+            nova.setOficina(of);
+        }
 
         return nova;
     }
 
     public void alterarRevisao (Vector revisao) throws MinhaException, SQLException, ParseException, ConexaoException {
 
+        Conexao conexao = FabricaConexao.obterConexao();
         RevisaoDao revisaoDao = FabricaDao.getRevisaoDao("JDBC");
-        //Revisao atualizada = this.novaRevisao(revisao);
-
-        //revisaoDao.alterarRevisao(atualizada);
+        CarroDao carroDao = FabricaDao.getCarroDao("JDBC");
+        Revisao atualizada = this.novaRevisao(revisao);
+        atualizada.setCodRevisao(Integer.parseInt(revisao.get(8).toString()));
+        int codCarro = carroDao.obterCodCarro(Integer.parseInt(revisao.get(7).toString()));
+        Carro car = new Carro();
+        car.setCodCarro(codCarro);
+        revisaoDao.alterarRevisao(atualizada,conexao);
+        carroDao.mudarDisponibilidade(conexao, car);
 
     }
 
-    public void inserirRevisao (Vector revisao) throws MinhaException, SQLException, ParseException {
+    public void inserirRevisao (Vector revisao) throws MinhaException, SQLException, ParseException, ConexaoException {
 
         RevisaoDao revisaoDao = FabricaDao.getRevisaoDao("JDBC");
-        //Revisao nova = this.novaRevisao(revisao);
+        Revisao nova = this.novaRevisao(revisao);
 
-        //revisaoDao.inserirRevisao(nova, null);
-
+        revisaoDao.inserirRevisao(nova);
 
     }
 
@@ -135,9 +159,25 @@ public class ControladoraRevisao {
     public Vector<Revisao> selecionarTodasRevisoes () throws MinhaException, SQLException, ConexaoException {
 
         RevisaoDao revisaoDao = FabricaDao.getRevisaoDao("JDBC");
-        this.vetRevisoes = revisaoDao.selecionarTodasRevisoes();
+        vetRevisoes = revisaoDao.selecionarTodasRevisoes();
              
-        return this.vetRevisoes;
+        return vetRevisoes;
+    }
+
+    public int ultimaRevisao() throws MinhaException, SQLException, ConexaoException {
+
+        RevisaoDao revisaoDao = FabricaDao.getRevisaoDao("JDBC");
+        int ultRevisao = revisaoDao.ultRevisao();
+
+        return ultRevisao;
+    }
+
+    public int codLocacao(String nome) throws MinhaException, SQLException, ConexaoException {
+
+        LocacaoDao locacaoDao = FabricaDao.getLocacaoDao("JDBC");
+        int codLocacao = locacaoDao.obterCodLocacao(nome);
+
+        return codLocacao;
     }
 
     public Vector obterLinhasRevisao() throws MinhaException, SQLException, ConexaoException{
@@ -150,6 +190,20 @@ public class ControladoraRevisao {
         }
 
         return linhas;
+    }
+
+    public int obterUltimaRevisao() throws MinhaException, SQLException, ConexaoException{
+
+        int valorRevisao = this.ultimaRevisao();
+
+        return valorRevisao;
+    }
+
+    public int obterCodLocacao(String nome) throws MinhaException, SQLException, ConexaoException{
+
+        int codLocacao = this.codLocacao(nome);
+
+        return codLocacao;
     }
 
     public Vector buscarDadosCompletos(Revisao rev) {
@@ -184,6 +238,35 @@ public class ControladoraRevisao {
 
 
         return revisao;
+    }
+
+    public Vector obterCarro(Vector linha, int cod) throws MinhaException, SQLException, ConexaoException {
+
+        Locacao loca = new Locacao();
+        if (cod == 0){
+            loca.setCodLocacao(Integer.parseInt(linha.get(1).toString()));
+        }else if (linha == null ){
+            loca.setCodLocacao(cod);
+        }
+        CarroDao carroDao = FabricaDao.getCarroDao("JDBC");
+        Carro carro = carroDao.selecionarCarro(loca);
+
+        Vector vetCarro = new Vector();
+
+        vetCarro.addElement(criarLinhaCarro(carro));
+
+        return vetCarro;
+    }
+
+    public Vector criarLinhaCarro(Carro car){
+
+        Vector vetCarro = new Vector();
+
+        vetCarro.addElement(car.getModelo());
+        vetCarro.addElement(car.getPlaca());
+        vetCarro.addElement(car.getChassi());
+
+        return vetCarro;
     }
 
 }

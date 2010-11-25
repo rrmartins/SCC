@@ -31,7 +31,7 @@ public class PagamentoJDBCDao implements PagamentoDao {
             sql = "insert into pagamento (cod_locacao, cod_entrega, quantidade_vezes, valor_total,data_emissao, data_vencimento) " +
                     "values (?,?,?,?,?,?);";
             PreparedStatement pstmt = this.connection.prepareStatement(sql);
-            pstmt.setInt(1, pagamento.getEntrega().getCodLocacao().getCodLocacao());
+            pstmt.setInt(1, pagamento.getEntrega().getLocacao().getCodLocacao());
             pstmt.setInt(2, pagamento.getEntrega().getCodEntrega());
             pstmt.setInt(3, pagamento.getQuantidadeVezes());
             pstmt.setDouble(4, pagamento.getValorTotal());

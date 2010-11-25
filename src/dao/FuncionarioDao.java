@@ -27,5 +27,7 @@ public interface FuncionarioDao {
 
     public Vector<Funcionario> selecionarFuncionariosPorCargo(String cargo) throws MinhaException, ConexaoException, SQLException;
 
+    public Funcionario selecionarFuncionariosPorNome(String nome) throws MinhaException, ConexaoException, SQLException;
+
 }
 
