@@ -1,33 +1,49 @@
 ========================
-BUILD OUTPUT DESCRIPTION
+LICENÇA DO SCC
 ========================
 
-When you build an Java application project that has a main class, the IDE
-automatically copies all of the JAR
-files on the projects classpath to your projects dist/lib folder. The IDE
-also adds each of the JAR files to the Class-Path element in the application
-JAR files manifest file (MANIFEST.MF).
+O SCC é totalmente livre.
+Esta disponivel no link: http://www.github.com/rrmartins/SCC
 
-To run the project from the command line, go to the dist folder and
-type the following:
 
-java -jar "SCC-SRC.jar" 
+IDENTIFICAÇÃO DAS PARTES CONTRATANTES
 
-To distribute this project, zip up the dist folder (including the lib folder)
-and distribute the ZIP file.
+          
+       	CONTRATANTE: IFES.
+              
+       	CONTRATADA: SCC
+              
+       	As partes acima identificadas têm, entre si, justo e acertado o presente Contrato de Licença de Uso e Prestação de Serviços de Software, que se regerá pelas cláusulas seguintes e pelas condições descritas no presente.
 
-Notes:
+DO OBJETO DO CONTRATO
 
-* If two JAR files on the project classpath have the same name, only the first
-JAR file is copied to the lib folder.
-* Only JAR files are copied to the lib folder.
-If the classpath contains other types of files or folders, none of the
-classpath elements are copied to the lib folder. In such a case,
-you need to copy the classpath elements to the lib folder manually after the build.
-* If a library on the projects classpath also has a Class-Path element
-specified in the manifest,the content of the Class-Path element has to be on
-the projects runtime path.
-* To set a main class in a standard Java project, right-click the project node
-in the Projects window and choose Properties. Then click Run and enter the
-class name in the Main Class field. Alternatively, you can manually type the
-class name in the manifest Main-Class element.
+              
+       	Cláusula 1. O presente instrumento tem como objeto a licença de uso do Software SCC, bem como a prestação de serviços de Software para a CONTRATANTE
+       
+       
+       
+		DA LICENÇA DE USO
+
+       
+       
+       	Cláusula 2. A presente licença de uso do Software SCC terá os aspectos da irretratabilidade e da irrevogabilidade.
+       
+       
+       
+		DAS OBRIGAÇÕES DA CONTRATANTE
+
+       
+       
+       	Cláusula 3. A CONTRATANTE se responsabiliza por fornecer todos os equipamentos necessários à CONTRATADA, a fim de que esta possa ter condições de realizar perfeitamente o serviço contratado, bem como hardware e software com a configuração fornecida pela CONTRATADA.
+       
+       	Cláusula 4. A CONTRATANTE assume a responsabilidade de contratar funcionários com os seguintes conhecimentos técnicos: programar; ter dominio de manutenção no SCC.
+       
+       	Cláusula 5. A CONTRATANTE se compromete também quanto aos termos do contrato de adesão apresentado na instalação do Software.
+       
+       	Cláusula 6. A CONTRATANTE se responsabilizará pelos problemas decorrentes do uso incorreto do Software SCC.
+
+
+		DAS ATUALIZAÇÕES
+
+       
+       	Cláusula 7. Fica acertado entre as partes que a CONTRATADA poderá, sem interferência da CONTRATANTE, realizar todas as alterações que reconhecer como necessárias de uma versão para outra do Software (xxx) (Nome do Software).

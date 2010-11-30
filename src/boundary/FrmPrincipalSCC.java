@@ -75,8 +75,6 @@ public class FrmPrincipalSCC extends javax.swing.JFrame {
             this.jLTipo.setText("Administrator");
         }else if (userTipo.get(0).equals("Funcionario"))
         {
-            this.jMIInserirRevisao.setVisible(false);
-            this.jLTipo.setText("Funcionario");
             this.jLNomeUsuario.setText(usuario.get(3).toString());
         }
     }
